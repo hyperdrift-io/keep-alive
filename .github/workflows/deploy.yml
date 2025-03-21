@@ -10,15 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Copy deploy script to server
+      - name: Copy project files to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: 69.62.124.138
           username: yannvr
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "scripts/deploy.sh"
-          target: "~/"
+          strip_components: 0
+          overwrite: true
+          source: "./*,.[!.]*"
+          target: "~/hyperdrift/wakeup"
 
       - name: Execute deploy script
         uses: appleboy/ssh-action@v1.0.0
@@ -27,7 +31,6 @@ jobs:
           username: yannvr
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/scripts
-            mv ~/deploy.sh ~/scripts/ 2>/dev/null || true
-            chmod +x ~/scripts/deploy.sh
-            ~/scripts/deploy.sh
+            cd ~/hyperdrift/wakeup
+            chmod +x ~/hyperdrift/wakeup/scripts/deploy.sh
+            ./scripts/deploy.sh

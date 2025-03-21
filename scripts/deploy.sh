@@ -5,11 +5,16 @@ set -e
 mkdir -p ~/hyperdrift/wakeup
 cd ~/hyperdrift/wakeup
 
-# Pull latest changes or clone repo if not exists
-if [ -d .git ]; then
-  git pull
-else
-  git clone https://github.com/yannvr/wakeup.git .
+# The git pull is no longer needed since we're copying files directly in the GitHub action
+# but keeping it as a fallback
+if [ ! -f package.json ]; then
+  echo "package.json not found, falling back to git clone"
+  # Pull latest changes or clone repo if not exists
+  if [ -d .git ]; then
+    git pull
+  else
+    git clone https://github.com/yannvr/wakeup.git .
+  fi
 fi
 
 # Install Bun if not already installed
@@ -32,7 +37,12 @@ command -v bun || echo "Bun not found in PATH"
 mkdir -p logs
 
 # Install dependencies using absolute path to bun
+echo "Installing dependencies..."
 ~/.bun/bin/bun install
+
+# Print installed packages for debugging
+echo "Installed packages:"
+~/.bun/bin/bun pm ls
 
 # Install Node.js if needed
 if ! command -v node &> /dev/null; then
@@ -48,7 +58,13 @@ if ! command -v pm2 &> /dev/null; then
 fi
 
 # Start/Restart the app with PM2
-pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
+if [ -f ecosystem.config.cjs ]; then
+  echo "Starting/restarting app with PM2 using ecosystem.config.cjs"
+  pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
+else
+  echo "ecosystem.config.cjs not found, starting app with PM2 directly"
+  pm2 restart "bun run index.ts" --name wakeup || pm2 start "bun run index.ts" --name wakeup
+fi
 
 # Save PM2 configuration to start on system boot
 pm2 save
