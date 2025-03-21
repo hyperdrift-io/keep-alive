@@ -59,11 +59,25 @@ fi
 
 # Start/Restart the app with PM2
 if [ -f ecosystem.config.cjs ]; then
-  echo "Starting/restarting app with PM2 using ecosystem.config.cjs"
-  pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
+  echo "Using ecosystem.config.cjs with PM2"
+  # Check if the app is already running
+  if pm2 list | grep -q "wakeup"; then
+    echo "Restarting existing app with PM2"
+    pm2 restart wakeup
+  else
+    echo "Starting new app with PM2"
+    pm2 start ecosystem.config.cjs
+  fi
 else
   echo "ecosystem.config.cjs not found, starting app with PM2 directly"
-  pm2 restart "bun run index.ts" --name wakeup || pm2 start "bun run index.ts" --name wakeup
+  # Check if the app is already running
+  if pm2 list | grep -q "wakeup"; then
+    echo "Restarting existing app with PM2"
+    pm2 restart wakeup
+  else
+    echo "Starting new app with PM2"
+    pm2 start "~/.bun/bin/bun run index.ts" --name wakeup
+  fi
 fi
 
 # Save PM2 configuration to start on system boot

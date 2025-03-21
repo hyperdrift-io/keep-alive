@@ -80,7 +80,7 @@ function wakeupApp() {
                     this.newURL = '';
                 } else {
                     const error = await response.json();
-                    alert(`Error: ${error.message || 'Failed to add URI'}`);
+                    alert(`Error: ${error.error || 'Failed to add URI'}`);
                 }
             } catch (error) {
                 console.error('Error adding URI:', error);

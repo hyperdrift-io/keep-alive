@@ -134,9 +134,15 @@ export const app = new Elysia()
     ({ body, set }) => {
       const { url } = body as { url: string };
 
-      if (!url || !isValidURL(url)) {
+      // Validate URL and check for duplicates in one pass
+      if (!isValidURL(url)) {
         set.status = 400;
-        return { error: 'Invalid URL provided' };
+        return { error: 'Invalid URL format' };
+      }
+
+      if (db.data.uris.some(uri => uri.url === url)) {
+        set.status = 400;
+        return { error: 'This URL already exists' };
       }
 
       const newURI: URI = {
