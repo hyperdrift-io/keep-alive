@@ -11,70 +11,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Deploy to server
+      - name: Copy deploy script to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: 69.62.124.138
+          username: yannvr
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "scripts/deploy.sh"
+          target: "~/"
+
+      - name: Execute deploy script
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: 69.62.124.138
           username: yannvr
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Navigate to app directory, creating it if needed
-            mkdir -p ~/wakeup
-            cd ~/wakeup
-
-            # Pull latest changes or clone repo if not exists
-            if [ -d .git ]; then
-              git pull
-            else
-              git clone https://github.com/yannvr/wakeup.git .
-            fi
-
-            # Install Bun if not already installed
-            if ! command -v bun &> /dev/null; then
-              echo "Installing Bun..."
-              curl -fsSL https://bun.sh/install | bash
-              export PATH="$HOME/.bun/bin:$PATH"
-              source ~/.bashrc
-            fi
-
-            # Verify Bun is installed
-            bun --version
-
-            # Install dependencies
-            bun install
-
-            # Setup PM2 configuration if not exists
-            if [ ! -f ecosystem.config.js ]; then
-              echo "Creating ecosystem.config.js..."
-              echo 'module.exports = {
-                apps: [{
-                  name: "wakeup",
-                  script: "bun run index.ts",
-                  env: {
-                    NODE_ENV: "production",
-                  }
-                }]
-              }' > ecosystem.config.js
-            fi
-
-            # Create logs directory if it doesn't exist
-            mkdir -p logs
-
-            # Install Node.js if needed
-            if ! command -v node &> /dev/null; then
-              echo "Installing Node.js..."
-              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-              sudo apt-get install -y nodejs
-            fi
-
-            # Install PM2 if needed
-            if ! command -v pm2 &> /dev/null; then
-              echo "Installing PM2..."
-              npm install -g pm2
-            fi
-
-            # Start/Restart the app with PM2
-            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
-
-            # Save PM2 configuration to start on system boot
-            pm2 save
+            ~/scripts/deploy.sh
