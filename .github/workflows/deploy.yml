@@ -11,11 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.7.0
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+          if_key_exists: replace
 
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 69.62.124.138 >> ~/.ssh/known_hosts
 
       - name: Deploy to server
         run: |
@@ -29,7 +35,6 @@ jobs:
               git pull
             else
               git clone https://github.com/yannvr/wakeup.git .
-              cd wakeup
             fi
 
             # Install dependencies
@@ -49,6 +54,9 @@ jobs:
               }
               CONFIG
             fi
+
+            # Create logs directory if it doesn't exist
+            mkdir -p logs
 
             # Start/Restart the app with PM2
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
