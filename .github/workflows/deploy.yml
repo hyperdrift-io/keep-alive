@@ -1,0 +1,62 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 69.62.124.138 >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        run: |
+          ssh yannvr@69.62.124.138 << 'EOF'
+            # Navigate to app directory, creating it if needed
+            mkdir -p ~/wakeup
+            cd ~/wakeup
+
+            # Pull latest changes or clone repo if not exists
+            if [ -d .git ]; then
+              git pull
+            else
+              git clone https://github.com/yannvr/wakeup.git .
+              cd wakeup
+            fi
+
+            # Install dependencies
+            bun install
+
+            # Setup PM2 configuration if not exists
+            if [ ! -f ecosystem.config.js ]; then
+              cat > ecosystem.config.js << 'CONFIG'
+              module.exports = {
+                apps: [{
+                  name: "wakeup",
+                  script: "bun run index.ts",
+                  env: {
+                    NODE_ENV: "production",
+                  }
+                }]
+              }
+              CONFIG
+            fi
+
+            # Start/Restart the app with PM2
+            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+
+            # Save PM2 configuration to start on system boot
+            pm2 save
+          EOF
