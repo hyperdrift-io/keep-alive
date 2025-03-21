@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WakeUp - URI Monitor</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+</head>
+<body>
+    <div id="app" x-data="wakeupApp()">
+        <div class="logs-bg" x-show="logs.length > 0">
+            <template x-for="log in logs" :key="log">
+                <div class="log-line" x-text="log"></div>
+            </template>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1>WakeUp</h1>
+                <p>URI Health Monitor</p>
+            </header>
+
+            <main>
+                <form @submit.prevent="addURI">
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            x-model="newURL"
+                            placeholder="https://example.com"
+                            :class="{ 'invalid': !isValidURL && newURL }"
+                        >
+                        <button type="submit" :disabled="!isValidURL || !newURL">Add URI</button>
+                    </div>
+                    <div class="error-message" x-show="!isValidURL && newURL">
+                        Please enter a valid URL
+                    </div>
+                </form>
+
+                <div class="uri-list" x-show="uris.length > 0">
+                    <h2>Monitored URIs</h2>
+                    <ul>
+                        <template x-for="uri in uris" :key="uri.id">
+                            <li :class="uri.status">
+                                <div class="uri-info">
+                                    <span class="uri-status" x-text="uri.status"></span>
+                                    <span class="uri-url" x-text="uri.url"></span>
+                                    <span class="uri-last-checked" x-show="uri.lastChecked">
+                                        Last checked: <span x-text="formatDate(uri.lastChecked)"></span>
+                                    </span>
+                                </div>
+                                <div class="uri-actions">
+                                    <button @click="editURI(uri)" class="edit-btn">Edit</button>
+                                    <button @click="deleteURI(uri.id)" class="delete-btn">Delete</button>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+
+                <div class="empty-state" x-show="uris.length === 0">
+                    <p>No URIs are being monitored yet. Add one above to get started!</p>
+                </div>
+            </main>
+
+            <div class="modal" x-show="showEditModal" @click.away="showEditModal = false">
+                <div class="modal-content">
+                    <h3>Edit URI</h3>
+                    <form @submit.prevent="updateURI">
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                x-model="editingURL"
+                                placeholder="https://example.com"
+                                :class="{ 'invalid': !isEditURLValid && editingURL }"
+                            >
+                        </div>
+                        <div class="error-message" x-show="!isEditURLValid && editingURL">
+                            Please enter a valid URL
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" @click="showEditModal = false">Cancel</button>
+                            <button type="submit" :disabled="!isEditURLValid || !editingURL">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
