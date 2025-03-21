@@ -27,4 +27,7 @@ jobs:
           username: yannvr
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            mkdir -p ~/scripts
+            mv ~/deploy.sh ~/scripts/ 2>/dev/null || true
+            chmod +x ~/scripts/deploy.sh
             ~/scripts/deploy.sh

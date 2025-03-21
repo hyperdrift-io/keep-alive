@@ -48,7 +48,7 @@ if ! command -v pm2 &> /dev/null; then
 fi
 
 # Start/Restart the app with PM2
-pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+pm2 restart ecosystem.config.cjs || pm2 start ecosystem.config.cjs
 
 # Save PM2 configuration to start on system boot
 pm2 save
