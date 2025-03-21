@@ -15,17 +15,27 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: github-actions # Custom name for the key
           known_hosts: unnecessary
           if_key_exists: replace
 
-      - name: Setup known_hosts
+      - name: Setup SSH config
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H 69.62.124.138 >> ~/.ssh/known_hosts
+          # Create SSH config file to specify which key to use
+          cat > ~/.ssh/config << 'CONFIG'
+          Host 69.62.124.138
+            User yannvr
+            IdentityFile ~/.ssh/github-actions
+            StrictHostKeyChecking no
+          CONFIG
+          chmod 600 ~/.ssh/config
+          ls -la ~/.ssh/
 
       - name: Deploy to server
         run: |
-          ssh yannvr@69.62.124.138 << 'EOF'
+          ssh -i ~/.ssh/github-actions -o StrictHostKeyChecking=no yannvr@69.62.124.138 << 'EOF'
             # Navigate to app directory, creating it if needed
             mkdir -p ~/wakeup
             cd ~/wakeup
