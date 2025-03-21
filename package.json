@@ -2,6 +2,11 @@
   "name": "wakeup",
   "module": "index.ts",
   "type": "module",
+  "dependencies": {
+    "elysia": "^0.8.6",
+    "@elysiajs/cron": "^0.8.0",
+    "lowdb": "^6.1.1"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
