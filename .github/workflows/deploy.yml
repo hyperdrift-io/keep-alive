@@ -11,31 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          name: github-actions # Custom name for the key
-          known_hosts: unnecessary
-          if_key_exists: replace
-
-      - name: Setup SSH config
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H 69.62.124.138 >> ~/.ssh/known_hosts
-          # Create SSH config file to specify which key to use
-          cat > ~/.ssh/config << 'CONFIG'
-          Host 69.62.124.138
-            User yannvr
-            IdentityFile ~/.ssh/github-actions
-            StrictHostKeyChecking no
-          CONFIG
-          chmod 600 ~/.ssh/config
-          ls -la ~/.ssh/
-
       - name: Deploy to server
-        run: |
-          ssh -i ~/.ssh/github-actions -o StrictHostKeyChecking=no yannvr@69.62.124.138 << 'EOF'
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 69.62.124.138
+          username: yannvr
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
             # Navigate to app directory, creating it if needed
             mkdir -p ~/wakeup
             cd ~/wakeup
@@ -47,13 +29,24 @@ jobs:
               git clone https://github.com/yannvr/wakeup.git .
             fi
 
+            # Install Bun if not already installed
+            if ! command -v bun &> /dev/null; then
+              echo "Installing Bun..."
+              curl -fsSL https://bun.sh/install | bash
+              export PATH="$HOME/.bun/bin:$PATH"
+              source ~/.bashrc
+            fi
+
+            # Verify Bun is installed
+            bun --version
+
             # Install dependencies
             bun install
 
             # Setup PM2 configuration if not exists
             if [ ! -f ecosystem.config.js ]; then
-              cat > ecosystem.config.js << 'CONFIG'
-              module.exports = {
+              echo "Creating ecosystem.config.js..."
+              echo 'module.exports = {
                 apps: [{
                   name: "wakeup",
                   script: "bun run index.ts",
@@ -61,16 +54,27 @@ jobs:
                     NODE_ENV: "production",
                   }
                 }]
-              }
-              CONFIG
+              }' > ecosystem.config.js
             fi
 
             # Create logs directory if it doesn't exist
             mkdir -p logs
+
+            # Install Node.js if needed
+            if ! command -v node &> /dev/null; then
+              echo "Installing Node.js..."
+              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+            fi
+
+            # Install PM2 if needed
+            if ! command -v pm2 &> /dev/null; then
+              echo "Installing PM2..."
+              npm install -g pm2
+            fi
 
             # Start/Restart the app with PM2
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
 
             # Save PM2 configuration to start on system boot
             pm2 save
-          EOF
