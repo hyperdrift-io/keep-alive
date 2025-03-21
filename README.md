@@ -45,7 +45,30 @@ pm2 start index.ts --interpreter bun
 
 ```bash
 # Run in development mode (with auto-reload)
-bun --watch index.ts
+bun dev
+
+# Run tests
+bun test
+
+# Run specific test file
+bun test test.ts
+```
+
+## Testing
+
+The application includes two types of tests:
+
+1. **Unit Tests**: Test individual components and functions
+2. **End-to-End Tests**: Test the complete application by starting the server and making real HTTP requests
+
+To run the tests:
+
+```bash
+# Run all tests
+bun test
+
+# Run specific test file
+bun test test.ts
 ```
 
 ## Future Enhancements
@@ -54,3 +77,7 @@ bun --watch index.ts
 - Advanced reporting and analytics
 - Multiple URIs for registered users
 - Notification system for status changes
+
+## License
+
+MIT

@@ -1,26 +1,41 @@
-# Node.js / Bun
+# Dependencies
 node_modules/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+.npm
+.yarn
+.pnp.*
 
-# Database files
-db.json
-*.db
-*.sqlite
+# Build files
+dist/
+build/
+*.tsbuildinfo
 
-# Environment
+# Environment variables
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
 # Logs
-logs/*
-!logs/.gitkeep
+logs/
+*.log
+npm-debug.log*
+
+# Database files
+*.db
+db.json
+test-db.json
+
+# Bun
+.bun/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # Editor/IDE
 .idea/
@@ -38,4 +53,4 @@ build/
 # Temp files
 *.tmp
 .temp
-.tmp 
+.tmp

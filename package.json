@@ -1,0 +1,16 @@
+{
+  "name": "wakeup",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "start": "bun index.ts",
+    "test": "TESTING=true bun test"
+  }
+}

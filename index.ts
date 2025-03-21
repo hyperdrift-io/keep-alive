@@ -7,7 +7,7 @@ import { stat } from 'fs/promises';
 import { join } from 'path';
 
 // Define types
-type URI = {
+export type URI = {
   id: string;
   url: string;
   status: 'up' | 'down' | 'unknown';
@@ -15,19 +15,20 @@ type URI = {
   createdAt: string;
 };
 
-type DBSchema = {
+export type DBSchema = {
   uris: URI[];
 };
 
-// Initialize LowDB
-const adapter = new JSONFile<DBSchema>('db.json');
+// Initialize LowDB with path from environment variable or default
+const DB_PATH = process.env.DB_PATH || 'db.json';
+const adapter = new JSONFile<DBSchema>(DB_PATH);
 const db = new Low(adapter, { uris: [] });
 
 // Load database
 await db.read();
 
 // Function to check if a URL is valid
-function isValidURL(url: string): boolean {
+export function isValidURL(url: string): boolean {
   try {
     new URL(url);
     return true;
@@ -37,7 +38,7 @@ function isValidURL(url: string): boolean {
 }
 
 // Function to ping a URI and update its status
-async function pingURI(uri: URI): Promise<URI> {
+export async function pingURI(uri: URI): Promise<URI> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -64,7 +65,7 @@ async function pingURI(uri: URI): Promise<URI> {
 }
 
 // Function to check all URIs
-async function checkAllURIs() {
+export async function checkAllURIs() {
   console.log('Checking all URIs...');
   const { uris } = db.data;
 
@@ -78,7 +79,7 @@ async function checkAllURIs() {
 }
 
 // Initialize app with cron job for URI pinging and error handling
-const app = new Elysia()
+export const app = new Elysia()
   .onError(({ code, error, set }) => {
     console.error(`Error [${code}]:`, error);
 
@@ -130,11 +131,12 @@ const app = new Elysia()
     return db.data.uris;
   })
   .post('/api/uris',
-    ({ body }) => {
+    ({ body, set }) => {
       const { url } = body as { url: string };
 
       if (!url || !isValidURL(url)) {
-        throw new Error('Invalid URL provided');
+        set.status = 400;
+        return { error: 'Invalid URL provided' };
       }
 
       const newURI: URI = {
@@ -164,32 +166,35 @@ const app = new Elysia()
       })
     }
   )
-  .delete('/api/uris/:id', ({ params }) => {
+  .delete('/api/uris/:id', ({ params, set }) => {
     const { id } = params;
     const initialLength = db.data.uris.length;
 
     db.data.uris = db.data.uris.filter(uri => uri.id !== id);
 
     if (db.data.uris.length === initialLength) {
-      throw new Error('URI not found');
+      set.status = 404;
+      return { error: 'URI not found' };
     }
 
     db.write();
     return { success: true };
   })
   .put('/api/uris/:id',
-    async ({ params, body }) => {
+    async ({ params, body, set }) => {
       const { id } = params;
       const { url } = body as { url: string };
 
       if (!url || !isValidURL(url)) {
-        throw new Error('Invalid URL provided');
+        set.status = 400;
+        return { error: 'Invalid URL provided' };
       }
 
       const uriIndex = db.data.uris.findIndex(uri => uri.id === id);
 
       if (uriIndex === -1) {
-        throw new Error('URI not found');
+        set.status = 404;
+        return { error: 'URI not found' };
       }
 
       db.data.uris[uriIndex].url = url;
@@ -225,10 +230,13 @@ const app = new Elysia()
     const logs = logContent.split('\n').filter(Boolean).slice(-50);
 
     return { logs };
-  })
-  .listen(3001);
+  });
 
-console.log(`WakeUp app is running at http://${app.server?.hostname}:${app.server?.port}`);
+// Start the server when this file is the main module (not imported by tests)
+if (!process.env.TESTING) {
+  app.listen(3001);
+  console.log(`WakeUp app is running at http://${app.server?.hostname}:${app.server?.port}`);
 
-// Run initial check
-checkAllURIs();
+  // Run initial check
+  checkAllURIs();
+}
