@@ -5,6 +5,7 @@ import { JSONFile } from 'lowdb/node';
 import { readFile } from 'fs/promises';
 import { stat } from 'fs/promises';
 import { join } from 'path';
+import { watchFile } from 'fs';
 
 // Define types
 export type URI = {
@@ -13,19 +14,36 @@ export type URI = {
   status: 'up' | 'down' | 'unknown';
   lastChecked: string | null;
   createdAt: string;
+  pingInterval?: number; // Optional specific interval for this URI
 };
 
 export type DBSchema = {
   uris: URI[];
+  settings: {
+    pingInterval: number;
+  };
 };
 
 // Initialize LowDB with path from environment variable or default
 const DB_PATH = process.env.DB_PATH || 'db.json';
 const adapter = new JSONFile<DBSchema>(DB_PATH);
-const db = new Low(adapter, { uris: [] });
+const db = new Low(adapter, { uris: [], settings: { pingInterval: 5 } });
 
 // Load database
 await db.read();
+
+// Ensure default settings exist
+if (!db.data) {
+  db.data = { uris: [], settings: { pingInterval: 5 } };
+} else if (!db.data.settings) {
+  db.data.settings = { pingInterval: 5 };
+}
+
+// Save initialized database
+await db.write();
+
+// Keep track of WebSocket connections for live reload
+const liveReloadClients = new Set<any>();
 
 // Function to check if a URL is valid
 export function isValidURL(url: string): boolean {
@@ -68,17 +86,52 @@ export async function pingURI(uri: URI): Promise<URI> {
 export async function checkAllURIs() {
   console.log('Checking all URIs...');
   const { uris } = db.data;
+  const globalInterval = db.data.settings.pingInterval;
 
-  const updatedUris = await Promise.all(
-    uris.map(uri => pingURI(uri))
-  );
+  const currentMinute = new Date().getMinutes();
 
-  db.data.uris = updatedUris;
-  await db.write();
+  // Filter URIs based on their individual interval settings or the global setting
+  const urisToCheck = uris.filter(uri => {
+    // If URI has a specific interval setting, use that
+    const interval = uri.pingInterval || globalInterval;
+
+    if (interval === 1) {
+      // Check every minute
+      return true;
+    } else if (interval === 5) {
+      // Check every 5 minutes
+      return currentMinute % 5 === 0;
+    } else if (interval === 10) {
+      // Check every 10 minutes
+      return currentMinute % 10 === 0;
+    }
+
+    return true; // Default to checking if interval is not recognized
+  });
+
+  console.log(`Checking ${urisToCheck.length} of ${uris.length} URIs based on interval settings...`);
+
+  // Only update the URIs that were checked
+  if (urisToCheck.length > 0) {
+    const updatedUris = await Promise.all(
+      urisToCheck.map(uri => pingURI(uri))
+    );
+
+    // Merge the updated URIs back into the original list
+    updatedUris.forEach(updatedUri => {
+      const index = db.data.uris.findIndex(uri => uri.id === updatedUri.id);
+      if (index !== -1) {
+        db.data.uris[index] = updatedUri;
+      }
+    });
+
+    await db.write();
+  }
+
   console.log('URI checks completed');
 }
 
-// Initialize app with cron job for URI pinging and error handling
+// Create a new Elysia application with cron job to check URIs every minute
 export const app = new Elysia()
   .onError(({ code, error, set }) => {
     console.error(`Error [${code}]:`, error);
@@ -104,8 +157,14 @@ export const app = new Elysia()
   .use(
     cron({
       name: 'check-uris',
-      pattern: '*/5 * * * *', // Every 5 minutes
-      run: checkAllURIs
+      pattern: '* * * * *', // Run every minute to handle all interval types
+      async run() {
+        // Skip execution in testing environment
+        if (process.env.TESTING) return;
+
+        console.log('Running scheduled check of URIs...');
+        await checkAllURIs();
+      }
     })
   )
   // Serve static files
@@ -236,6 +295,96 @@ export const app = new Elysia()
     const logs = logContent.split('\n').filter(Boolean).slice(-50);
 
     return { logs };
+  })
+  // Settings endpoint
+  .get('/api/settings', () => {
+    return db.data.settings;
+  })
+  .post('/api/settings',
+    async ({ body, set }) => {
+      const { pingInterval } = body as { pingInterval: number };
+
+      if (typeof pingInterval !== 'number' || ![1, 5, 10].includes(pingInterval)) {
+        set.status = 400;
+        return { error: 'Invalid ping interval. Must be 1, 5, or 10 minutes.' };
+      }
+
+      db.data.settings.pingInterval = pingInterval;
+      await db.write();
+
+      console.log(`Ping interval updated to ${pingInterval} minutes`);
+      return db.data.settings;
+    },
+    {
+      body: t.Object({
+        pingInterval: t.Number()
+      })
+    }
+  )
+  // Add endpoints for URI-specific interval settings
+  .post('/api/uris/:id/interval',
+    async ({ params, body, set }) => {
+      const { id } = params;
+      const { pingInterval } = body as { pingInterval: number };
+
+      // Validate interval
+      if (typeof pingInterval !== 'number' || ![1, 5, 10].includes(pingInterval)) {
+        set.status = 400;
+        return { error: 'Invalid ping interval. Must be 1, 5, or 10 minutes.' };
+      }
+
+      // Find the URI
+      const uriIndex = db.data.uris.findIndex(uri => uri.id === id);
+      if (uriIndex === -1) {
+        set.status = 404;
+        return { error: 'URI not found' };
+      }
+
+      // Update the URI with the specific interval
+      db.data.uris[uriIndex].pingInterval = pingInterval;
+      await db.write();
+
+      console.log(`URI ${id} ping interval set to ${pingInterval} minutes`);
+      return db.data.uris[uriIndex];
+    },
+    {
+      body: t.Object({
+        pingInterval: t.Number()
+      })
+    }
+  )
+  .delete('/api/uris/:id/interval', async ({ params, set }) => {
+    const { id } = params;
+
+    // Find the URI
+    const uriIndex = db.data.uris.findIndex(uri => uri.id === id);
+    if (uriIndex === -1) {
+      set.status = 404;
+      return { error: 'URI not found' };
+    }
+
+    // Remove the specific interval setting
+    if (db.data.uris[uriIndex].pingInterval !== undefined) {
+      delete db.data.uris[uriIndex].pingInterval;
+      await db.write();
+      console.log(`URI ${id} ping interval removed, reverting to global setting`);
+    }
+
+    return db.data.uris[uriIndex];
+  })
+  // WebSocket endpoint for live reload in development mode
+  .ws('/livereload', {
+    open(ws) {
+      console.log('Live reload client connected');
+      liveReloadClients.add(ws);
+    },
+    close(ws) {
+      console.log('Live reload client disconnected');
+      liveReloadClients.delete(ws);
+    },
+    message(ws, message) {
+      console.log('Received message from live reload client:', message);
+    }
   });
 
 // Start the server when this file is the main module (not imported by tests)
@@ -245,4 +394,33 @@ if (!process.env.TESTING) {
 
   // Run initial check
   checkAllURIs();
+
+  // Set up file watching for live reload in development mode
+  // Only watch if not in production mode (we'll check for a specific env var)
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    console.log('Setting up live reload for development mode');
+
+    // Files to watch for changes
+    const filesToWatch = [
+      './public/index.html',
+      './public/style.css',
+      './public/app.js',
+      './index.ts'
+    ];
+
+    filesToWatch.forEach(file => {
+      watchFile(file, { interval: 1000 }, (curr, prev) => {
+        if (curr.mtime !== prev.mtime) {
+          console.log(`File ${file} changed, notifying clients`);
+
+          // Notify all connected WebSocket clients to reload
+          liveReloadClients.forEach(client => {
+            if (client.readyState === 1) { // OPEN
+              client.send('reload');
+            }
+          });
+        }
+      });
+    });
+  }
 }
