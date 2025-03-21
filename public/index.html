@@ -3,30 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="HyperBridge Protocol - Advanced URI Health Monitoring System. Establish secure connections to network endpoints and monitor their status in real-time.">
-    <meta name="theme-color" content="#0a0e17">
-    <title>HyperBridge - URI Health Monitor</title>
+    <meta name="description" content="Keep Alive - Advanced URI Health Monitoring System. Prevent cold starts and keep your services responsive for the best user experience.">
+    <meta name="theme-color" content="#121726">
+    <title>Keep Alive - URI Health Monitor</title>
     <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Nohemi:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
-    <!-- Live reload script for development -->
-    <script>
-        // Check if we're in development mode by looking for the dev server
-        if (window.location.port === '3001') {
-            const liveReload = () => {
-                const ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/livereload`);
-                ws.onmessage = () => window.location.reload();
-                ws.onclose = () => {
-                    // Try to reconnect if connection is lost
-                    setTimeout(liveReload, 1000);
-                };
-            };
-            liveReload();
-        }
-    </script>
 </head>
 <body>
     <div id="app" x-data="wakeupApp()">
@@ -63,9 +48,9 @@
 
         <div class="container">
             <header>
-                <h1>HyperBridge<div class="title-accent"></div></h1>
-                <div class="subtitle">Keep Server Awake</div>
-                <p class="header-description">A modern URI health monitoring tool to prevent cold starts.</p>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">URI Health Monitor</div>
+                <p class="header-description">Keep your services responsive and prevent cold starts.</p>
             </header>
 
             <main>
@@ -181,68 +166,43 @@
                 </div>
             </main>
 
-            <div class="modal" x-show="showEditModal" @click.away="showEditModal = false">
-                <div class="modal-content">
-                    <h3>Edit Connection</h3>
-                    <form @submit.prevent="updateURI">
-                        <div class="form-group">
-                            <input
-                                type="text"
-                                x-model="editingURL"
-                                placeholder="https://example.com"
-                                :class="{ 'invalid': !isEditURLValid && editingURL }"
-                            >
-                        </div>
-                        <div class="error-message" x-show="!isEditURLValid && editingURL">
-                            Please enter a valid URL
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" @click="showEditModal = false">Cancel</button>
-                            <button type="submit" :disabled="!isEditURLValid || !editingURL">Save</button>
-                        </div>
-                    </form>
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/" class="active">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html">FAQ</a>
+                </nav>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Keep Alive. All rights reserved.</p>
                 </div>
+            </footer>
+        </div>
+
+        <div class="modal" x-show="showEditModal" @click.away="showEditModal = false">
+            <div class="modal-content">
+                <h3>Edit Connection</h3>
+                <form @submit.prevent="updateURI">
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            x-model="editingURL"
+                            placeholder="https://example.com"
+                            :class="{ 'invalid': !isEditURLValid && editingURL }"
+                        >
+                    </div>
+                    <div class="error-message" x-show="!isEditURLValid && editingURL">
+                        Please enter a valid URL
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" @click="showEditModal = false">Cancel</button>
+                        <button type="submit" :disabled="!isEditURLValid || !editingURL">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Live reload script for development mode -->
-    <script>
-        // Only set up live reload if we're on port 3001 (dev mode)
-        if (window.location.port === '3001') {
-            console.log('Development mode detected - setting up live reload');
-
-            // Set up WebSocket for live reload
-            function setupLiveReload() {
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const ws = new WebSocket(`${protocol}//${window.location.host}/livereload`);
-
-                ws.onopen = () => {
-                    console.log('Live reload connected');
-                };
-
-                ws.onmessage = (event) => {
-                    console.log('Server change detected, reloading page');
-                    window.location.reload();
-                };
-
-                ws.onclose = () => {
-                    console.log('Live reload disconnected, attempting to reconnect...');
-                    setTimeout(setupLiveReload, 2000);
-                };
-
-                ws.onerror = (err) => {
-                    console.error('Live reload error:', err);
-                    setTimeout(setupLiveReload, 2000);
-                };
-            }
-
-            setupLiveReload();
-        }
-    </script>
-
-    <!-- Alpine.js -->
-    <script src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js" defer></script>
     <script src="/app.js"></script>
 </body>
 </html>

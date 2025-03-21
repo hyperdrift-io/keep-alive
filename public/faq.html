@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Keep Alive - FAQ. No-nonsense URI monitoring for developers who hate cold starts.">
+    <meta name="theme-color" content="#0f172a">
+    <title>Keep Alive - FAQ</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Nohemi:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">FAQ</div>
+                <p class="header-description">By developers. For developers. No bullshit.</p>
+            </header>
+
+            <main class="faq-content">
+                <div class="faq-header">
+                    <h2>Your services go to sleep. We fix that with a single click.</h2>
+                </div>
+
+                <div class="faq-item">
+                    <h3>What's the problem Keep Alive solves?</h3>
+                    <p>Free and low-tier hosting puts your apps to sleep after inactivity. Your users hit your endpoint, wait 10+ seconds for a cold start, and bounce. Game over.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Why not just use existing solutions?</h3>
+                    <p>Current options suck:</p>
+                    <ul>
+                        <li><strong>Cron jobs:</strong> Requires server configuration you might not have access to.</li>
+                        <li><strong>Uptime monitors:</strong> Bloated dashboards, excessive notifications, high costs.</li>
+                        <li><strong>Custom scripts:</strong> One more thing to maintain, deploy, and worry about.</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How does Keep Alive fix this?</h3>
+                    <p>Single endpoint. One click. Your service stays awake. That's it.</p>
+                    <ul>
+                        <li>No account setup</li>
+                        <li>No complex configuration</li>
+                        <li>No BS email notifications</li>
+                        <li>Just works™</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Is this actually free?</h3>
+                    <p>Yes. Free tier gives you:</p>
+                    <ul>
+                        <li>Monitor up to 2 URIs</li>
+                        <li>Default 5-minute ping interval</li>
+                        <li>Basic status monitoring</li>
+                    </ul>
+                    <p>Only need more when using at scale? Subscribe.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>What does the paid tier include?</h3>
+                    <p>Everything in free, plus:</p>
+                    <ul>
+                        <li>Unlimited URIs</li>
+                        <li>Custom ping intervals (down to 1 minute)</li>
+                        <li>Request customization (headers, methods, body)</li>
+                        <li>Response validation</li>
+                        <li>Advanced logging</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Real-world scenario: Free Render Web Service</h3>
+                    <p>Render's free tier puts your service to sleep after 15 minutes of inactivity. Your backend takes 30+ seconds to spin up again.</p>
+                    <p><strong>User experience:</strong> Click. Wait. Wait some more. Close tab. Never return.</p>
+                    <p><strong>Keep Alive solution:</strong> Add your Render URL, we ping it every 5 minutes, it stays warm. Your users never wait again.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Real-world scenario: Serverless Function Cold Starts</h3>
+                    <p>Serverless functions on AWS Lambda, Vercel, or Netlify go cold after inactivity. First request triggers a cold start, slowing down critical API responses.</p>
+                    <p><strong>Normal approach:</strong> Accept the performance hit or implement complex warming solutions with CloudWatch events or third-party services.</p>
+                    <p><strong>Keep Alive approach:</strong> Paste your function URL, we keep it warm. One and done.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Real-world scenario: Railway Free Tier Sleeping</h3>
+                    <p>Railway's free tier provides 500 hours/month but puts services to sleep to conserve your hours.</p>
+                    <p><strong>Common workaround:</strong> Custom cron job on another service to ping your application (more infra to manage).</p>
+                    <p><strong>Keep Alive solution:</strong> Add your Railway URL, customize the ping interval to your usage patterns, keep your app responsive while still managing your free tier hours.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Privacy & Security</h3>
+                    <p>We don't store your endpoint response data. We only track URI status and response time.</p>
+                    <p>All requests are made server-side to avoid CORS issues and keep your endpoints secure.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Open Source</h3>
+                    <p>Keep Alive is fully open source. Audit the code, self-host it, or contribute to make it better.</p>
+                    <p class="github-link">
+                        <a href="https://github.com/yannvr/hyper" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+                            </svg>
+                            Star us on GitHub
+                        </a>
+                    </p>
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html" class="active">FAQ</a>
+                </nav>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Keep Alive. All rights reserved.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

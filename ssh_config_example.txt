@@ -1,0 +1,14 @@
+# Example SSH config file for your local machine
+# Place this in ~/.ssh/config
+
+Host 69.62.124.138
+  User yannvr
+  IdentityFile ~/.ssh/github-deploy-key
+  StrictHostKeyChecking no
+
+# You can also use a hostname alias
+Host wakeup-server
+  HostName 69.62.124.138
+  User yannvr
+  IdentityFile ~/.ssh/github-deploy-key
+  StrictHostKeyChecking no

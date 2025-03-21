@@ -421,25 +421,25 @@ function wakeupApp() {
                             transform: translateY(100%) rotate(30deg);
                         }
                     }
-                    .hyperbridge-notification {
+                    .Keep Alive-notification {
                         position: fixed;
                         bottom: 20px;
                         right: 20px;
                         padding: 12px 20px;
-                        background-color: var(--dark-color);
-                        color: var(--text-color);
-                        border-radius: 6px;
-                        box-shadow: var(--shadow);
+                        background-color: #fff;
+                        color: var(--color-steel-blue);
+                        border-radius: 12px;
+                        box-shadow: var(--shadow-lg);
                         z-index: 1000;
                         opacity: 0;
                         transform: translateY(20px);
                         transition: all 0.3s ease;
                         border-left: 3px solid var(--success-color);
                     }
-                    .hyperbridge-notification.error {
+                    .Keep Alive-notification.error {
                         border-left-color: var(--danger-color);
                     }
-                    .hyperbridge-notification.show {
+                    .Keep Alive-notification.show {
                         opacity: 1;
                         transform: translateY(0);
                     }

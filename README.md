@@ -1,13 +1,17 @@
-# WakeUp
+# Keep Alive Protocol
 
-A minimal URI health monitoring tool that periodically checks the status of your important URLs.
+A sleek URI health monitoring tool that keeps servers awake by periodically pinging endpoints.
 
 ## Features
 
-- Monitor health status of multiple URLs
-- Easy-to-use interface for managing URIs
-- Real-time status updates
+- Monitor health status of multiple URLs to prevent cold starts
+- Configurable ping intervals (1, 5, or 10 minutes)
+- Per-endpoint customizable ping intervals
+- Easy-to-use interface for managing endpoints
+- Real-time status updates with visual indicators
 - Background PM2 logs display
+- Modern, responsive design with Keep Alive protocol theme
+- Live reload during development for easy interface testing
 
 ## Security Considerations
 
@@ -27,19 +31,19 @@ This application has been designed with the following security considerations:
 # Install dependencies
 bun install
 
-# Start the application
-bun run index.ts
+# Start the application in development mode with auto-reload
+bun run dev
+
+# Start the application in production mode
+bun run start
 ```
 
-For production deployment:
+## Usage
 
-```bash
-# Install PM2 if not already installed
-npm install -g pm2
-
-# Start with PM2
-pm2 start index.ts --interpreter bun
-```
+1. Access the web interface at http://localhost:3001
+2. Add URLs you want to monitor
+3. The application will ping each URL at the selected interval to keep them awake
+4. Configure the ping interval for each endpoint using its settings button
 
 ## Development
 
@@ -53,6 +57,8 @@ bun test
 # Run specific test file
 bun test test.ts
 ```
+
+The development mode includes live reload functionality that automatically refreshes the browser when you make changes to the source files.
 
 ## Testing
 

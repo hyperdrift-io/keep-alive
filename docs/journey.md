@@ -1,9 +1,9 @@
-# HyperBridge Protocol
+# Keep Alive Protocol
 
 ## Design Inspiration
-The HyperBridge protocol theme is inspired by futuristic digital connection systems with a dark, modern interface. The theme incorporates a sleek dark color palette with glowing cyan and purple accents.
+The Keep Alive protocol theme is inspired by futuristic digital connection systems with a dark, modern interface. The theme incorporates a sleek dark color palette with glowing cyan and purple accents.
 
-Design reference: https://dribbble.com/shots/24575353-HyperBridge-protocol
+Design reference: https://dribbble.com/shots/24575353-Keep Alive-protocol
 
 ## Color Palette
 - Primary: #14f1d9 (Cyan)
