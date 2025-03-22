@@ -9,6 +9,7 @@ function wakeupApp() {
         logsInterval: null,
         lastLog: null,
         defaultPingInterval: 5, // Default 5 minutes
+        showGlobalSettings: false, // Track global settings panel state
         notification: {
             show: false,
             message: '',
@@ -31,6 +32,7 @@ function wakeupApp() {
             // Add click handler to close settings panels when clicking outside
             document.addEventListener('click', () => {
                 this.closeAllSettingsPanels();
+                this.showGlobalSettings = false;
             });
         },
 
@@ -63,6 +65,31 @@ function wakeupApp() {
             }
         },
 
+        // Update global default ping interval
+        async setDefaultPingInterval(minutes) {
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pingInterval: minutes })
+                });
+
+                if (response.ok) {
+                    const settings = await response.json();
+                    this.defaultPingInterval = settings.pingInterval;
+                    this.showNotification(`Default ping interval set to ${minutes} minute${minutes === 1 ? '' : 's'}`);
+                } else {
+                    const error = await response.json();
+                    this.showNotification(`Error: ${error.error || 'Failed to update default interval'}`, true);
+                }
+            } catch (error) {
+                console.error('Error updating default ping interval:', error);
+                this.showNotification('An error occurred while updating the default interval', true);
+            }
+        },
+
         // Toggle endpoint settings panel
         toggleEndpointSettings(uri) {
             // First close any other open settings panels
@@ -85,7 +112,7 @@ function wakeupApp() {
         // Set ping interval for specific endpoint
         async setEndpointPingInterval(uriId, minutes) {
             try {
-                const response = await fetch(`/api/uris/${uriId}/interval`, {
+                const response = await fetch(`/api/uris/${uriId}/ping-interval`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -115,8 +142,12 @@ function wakeupApp() {
         // Remove custom ping interval for endpoint (revert to default)
         async removeEndpointPingInterval(uriId) {
             try {
-                const response = await fetch(`/api/uris/${uriId}/interval`, {
-                    method: 'DELETE'
+                const response = await fetch(`/api/uris/${uriId}/ping-interval`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pingInterval: null })
                 });
 
                 if (response.ok) {
@@ -487,6 +518,19 @@ function wakeupApp() {
                     }
                 `;
                 document.head.appendChild(style);
+            }
+        },
+
+        // Toggle global settings panel
+        toggleGlobalSettings(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            this.showGlobalSettings = !this.showGlobalSettings;
+
+            // Close endpoint settings when opening global settings
+            if (this.showGlobalSettings) {
+                this.closeAllSettingsPanels();
             }
         }
     };

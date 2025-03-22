@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AWS Lambda Cold Start Prevention Guide - Keep your Lambda functions warm and responsive with Keep Alive.">
+    <meta name="theme-color" content="#0040F0">
+    <title>Keep Alive - AWS Lambda Cold Start Prevention Guide</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+    <style>
+        /* Additional styles specific to platform guides */
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h2 {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header p {
+            color: var(--neutral-600);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--neutral-300);
+        }
+
+        .faq-item h3 {
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .faq-item h3:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .faq-item p {
+            color: var(--neutral-700);
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .faq-item ul, .faq-item ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .faq-item ul li, .faq-item ol li {
+            color: var(--neutral-700);
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 0.5rem;
+            box-shadow: none;
+            background: none;
+            border: none;
+            transform: none;
+        }
+
+        .faq-item ul li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: -1rem;
+        }
+
+        .platform-comparison-box {
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--neutral-200);
+            margin-top: 1rem;
+        }
+
+        .comparison-list li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .comparison-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .platform-navigation {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .platform-navigation h3 {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .platform-navigation h3:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .platform-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .platform-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #FFFFFF;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-link:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: rgba(0, 64, 240, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-container {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary), var(--shadow-lg);
+        }
+
+        @media (max-width: 768px) {
+            .faq-item {
+                padding: 1.5rem;
+            }
+
+            .platform-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Logs background - adds a subtle tech pattern -->
+        <div class="logs-bg">
+            <div class="log-container">
+                <!-- This will be populated by JavaScript if desired -->
+            </div>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">AWS Lambda Guide</div>
+                <p class="header-description">Eliminate cold starts. Keep your Lambdas warm.</p>
+            </header>
+
+            <main class="faq-content">
+                <div class="faq-header">
+                    <h2>AWS Lambda Cold Start Prevention Guide</h2>
+                    <p>For developers who need their serverless functions to respond instantly.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>What causes Lambda cold starts?</h3>
+                    <p>Cold starts occur when AWS needs to provision a new container for your function. This happens when your function hasn't been invoked recently or during traffic spikes requiring new instances.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How bad are Lambda cold starts?</h3>
+                    <p>Initialization can add 300ms-10s+ to response times depending on runtime, dependencies, and VPC configuration. Node.js and Python are faster; Java and .NET are slower. Cold starts are particularly problematic for user-facing applications.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How does Keep Alive solve Lambda cold starts?</h3>
+                    <p>Keep Alive sends periodic HTTP requests to your Lambda function URL or API Gateway endpoint, keeping the container warm. Unlike DIY solutions, Keep Alive:</p>
+                    <ul>
+                        <li>Handles monitoring and retries automatically</li>
+                        <li>Requires zero code changes to your Lambda</li>
+                        <li>Works with any runtime</li>
+                        <li>Maintains detailed logs of availability</li>
+                        <li>Allows custom ping intervals per endpoint</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Setup guide</h3>
+                    <ol>
+                        <li>Create a simple API Gateway endpoint or Lambda Function URL that triggers your function</li>
+                        <li>Add the URL to Keep Alive with appropriate ping interval (typically 5-10 minutes)</li>
+                        <li>Monitor the status in the dashboard</li>
+                    </ol>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Advanced strategies</h3>
+                    <ul>
+                        <li><strong>Multiple memory configs:</strong> For functions with multiple memory configurations, ping each configuration</li>
+                        <li><strong>VPC connections:</strong> For VPC-connected functions, ensure your ping hits actual function code</li>
+                        <li><strong>Critical paths:</strong> Consider separate ping endpoints for critical paths</li>
+                        <li><strong>Regional functions:</strong> Regional functions need separate warm-up for each region</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Does this affect my AWS costs?</h3>
+                    <p>Minimally. Lambda charges for compute time in 1ms increments, but Keep Alive's lightweight pings use very little compute time. For a typical function:</p>
+                    <ul>
+                        <li>Ping every 5 minutes = ~8,640 invocations per month</li>
+                        <li>~100ms execution time = ~864,000ms (14.4 minutes) of compute</li>
+                        <li>Free tier includes 1M requests and 400,000 GB-seconds</li>
+                    </ul>
+                    <p>In most cases, the improved user experience far outweighs the minimal cost increase.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>AWS Lambda vs other platforms</h3>
+                    <div class="platform-comparison-box">
+                        <p>Lambda has unique characteristics compared to other serverless platforms:</p>
+                        <ul class="comparison-list">
+                            <li><strong>AWS Lambda:</strong> Container recycling after inactivity → Fully mitigated with Keep Alive</li>
+                            <li><strong>Vercel/Netlify:</strong> Built on Lambda with additional constraints → Similar warming benefits</li>
+                            <li><strong>Render/Heroku:</strong> Different architecture with sleep policies → Different warming approach</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="platform-navigation">
+                    <h3>Other Platform Guides</h3>
+                    <div class="platform-links">
+                        <a href="/render-guide" class="platform-link">Render Apps</a>
+                        <a href="/amplify-guide" class="platform-link">Amplify Functions</a>
+                        <a href="/heroku-guide" class="platform-link">Heroku Dynos</a>
+                        <a href="/vercel-guide" class="platform-link">Vercel Functions</a>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a href="/" class="cta-button">Keep Your Lambda Functions Warm Now</a>
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html">FAQ</a>
+                </nav>
+                <div class="platform-links">
+                    <small>Platform Guides:</small>
+                    <a href="/aws-lambda-guide" class="active">AWS Lambda</a>
+                    <a href="/render-guide">Render Apps</a>
+                    <a href="/amplify-guide">Amplify Functions</a>
+                    <a href="/heroku-guide">Heroku Dynos</a>
+                    <a href="/vercel-guide">Vercel Functions</a>
+                    <a href="/platform-comparison">Platform Comparison</a>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Keep Alive by QUANTUMLAB. Made with ♥ for developers.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

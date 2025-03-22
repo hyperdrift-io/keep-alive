@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Heroku Dyno Cold Start Prevention Guide - Keep your Heroku apps warm and responsive with Keep Alive.">
+    <meta name="theme-color" content="#0040F0">
+    <title>Keep Alive - Heroku Dyno Cold Start Prevention Guide</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+    <style>
+        /* Additional styles specific to platform guides */
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h2 {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header p {
+            color: var(--neutral-600);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--neutral-300);
+        }
+
+        .faq-item h3 {
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .faq-item h3:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .faq-item p {
+            color: var(--neutral-700);
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .faq-item ul, .faq-item ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .faq-item ul li, .faq-item ol li {
+            color: var(--neutral-700);
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 0.5rem;
+            box-shadow: none;
+            background: none;
+            border: none;
+            transform: none;
+        }
+
+        .faq-item ul li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: -1rem;
+        }
+
+        .platform-comparison-box {
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--neutral-200);
+            margin-top: 1rem;
+        }
+
+        .comparison-list li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .comparison-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .platform-navigation {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .platform-navigation h3 {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .platform-navigation h3:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .platform-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .platform-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #FFFFFF;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-link:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: rgba(0, 64, 240, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-container {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary), var(--shadow-lg);
+        }
+
+        @media (max-width: 768px) {
+            .faq-item {
+                padding: 1.5rem;
+            }
+
+            .platform-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Logs background - adds a subtle tech pattern -->
+        <div class="logs-bg">
+            <div class="log-container">
+                <!-- This will be populated by JavaScript if desired -->
+            </div>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">Heroku Guide</div>
+                <p class="header-description">Keep your Heroku dynos responsive and prevent cold starts.</p>
+            </header>
+
+            <main class="faq-content">
+                <div class="faq-header">
+                    <h2>Heroku Dyno Cold Start Prevention Guide</h2>
+                    <p>For developers using Heroku's free and hobby tiers.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Why do Heroku dynos sleep?</h3>
+                    <p>Free tier Heroku dynos automatically sleep after 30 minutes of inactivity. They also sleep 6 hours in any 24-hour period regardless of traffic (as of Heroku's policy changes).</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>What happens when a dyno sleeps?</h3>
+                    <p>When a sleeping dyno receives traffic, Heroku must wake it up - taking 10-30 seconds. During this time, users see a loading screen or timeout.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How does Keep Alive prevent Heroku dyno sleep?</h3>
+                    <p>Keep Alive sends HTTP requests to your Heroku app before the 30-minute inactivity timeout is reached:</p>
+                    <ul>
+                        <li>Configurable ping intervals (25 minutes recommended for Heroku)</li>
+                        <li>Works with any Heroku stack/language</li>
+                        <li>No code changes required</li>
+                        <li>Dashboard shows uptime statistics</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Setup guide</h3>
+                    <ol>
+                        <li>Add your Heroku app URL to Keep Alive</li>
+                        <li>Set ping interval to 25 minutes</li>
+                        <li>Optionally create a lightweight health endpoint</li>
+                        <li>Monitor response times to verify dyno remains awake</li>
+                    </ol>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Important Heroku limitations</h3>
+                    <p>The 6-hour sleep quota per 24 hours on free tier cannot be circumvented by pinging. For production apps requiring 24/7 uptime, consider Heroku's Eco or Basic plans. Keep Alive will still optimize uptime within free tier constraints.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Best practices for Heroku apps</h3>
+                    <ul>
+                        <li><strong>Strategic pinging:</strong> If you have usage patterns, time your pings during likely user hours</li>
+                        <li><strong>Quick startup:</strong> Optimize your app's boot time for faster recovery from sleep</li>
+                        <li><strong>Multiple dynos:</strong> For complex apps, ping each service separately</li>
+                        <li><strong>Database connections:</strong> Use connection pooling to handle reconnects after sleep</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Heroku-specific tips</h3>
+                    <p>Beyond basic pinging, these strategies can help with Heroku free tier:</p>
+                    <ul>
+                        <li><strong>Worker dynos:</strong> Use separate worker dynos for background tasks (they have different sleep policies)</li>
+                        <li><strong>Memory leaks:</strong> Heroku's R14 errors are more common on free dynos - fix memory leaks</li>
+                        <li><strong>Startup hooks:</strong> Implement proper startup hooks to handle post-sleep initialization</li>
+                        <li><strong>Timeout handling:</strong> Implement progressive timeout handling in your app</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Heroku vs other platforms</h3>
+                    <div class="platform-comparison-box">
+                        <p>Heroku's free tier has specific limitations compared to other platforms, but Keep Alive can still help:</p>
+                        <ul class="comparison-list">
+                            <li><strong>Heroku:</strong> 30 minutes + 6hr quota → Partially mitigated with Keep Alive</li>
+                            <li><strong>Render:</strong> 15 minutes → Fully mitigated with Keep Alive</li>
+                            <li><strong>Lambda:</strong> No explicit sleep policy, but containers recycle → Fully mitigated</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="platform-navigation">
+                    <h3>Other Platform Guides</h3>
+                    <div class="platform-links">
+                        <a href="/aws-lambda-guide" class="platform-link">AWS Lambda</a>
+                        <a href="/render-guide" class="platform-link">Render Apps</a>
+                        <a href="/amplify-guide" class="platform-link">Amplify Functions</a>
+                        <a href="/vercel-guide" class="platform-link">Vercel Functions</a>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a href="/" class="cta-button">Keep Your Heroku Apps Awake Now</a>
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html">FAQ</a>
+                </nav>
+                <div class="platform-links">
+                    <small>Platform Guides:</small>
+                    <a href="/aws-lambda-guide">AWS Lambda</a>
+                    <a href="/render-guide">Render Apps</a>
+                    <a href="/amplify-guide">Amplify Functions</a>
+                    <a href="/heroku-guide" class="active">Heroku Dynos</a>
+                    <a href="/vercel-guide">Vercel Functions</a>
+                    <a href="/platform-comparison">Platform Comparison</a>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Keep Alive by QUANTUMLAB. Made with ♥ for developers.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

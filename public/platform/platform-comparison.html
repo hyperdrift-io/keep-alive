@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Serverless Platform Cold Start Comparison - Compare sleep policies and solutions for AWS Lambda, Render, Amplify, Heroku, and Vercel.">
+    <meta name="theme-color" content="#0040F0">
+    <title>Keep Alive - Platform Cold Start Comparison</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+    <style>
+        /* Additional styles specific to platform comparison */
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h2 {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header p {
+            color: var(--neutral-600);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--neutral-300);
+        }
+
+        .faq-item h3 {
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .faq-item h3:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .faq-item p {
+            color: var(--neutral-700);
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .faq-item ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .faq-item ul li {
+            color: var(--neutral-700);
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 0.5rem;
+            box-shadow: none;
+            background: none;
+            border: none;
+            transform: none;
+        }
+
+        .faq-item ul li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: -1rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+        }
+
+        .comparison-table th {
+            background-color: var(--neutral-100);
+            color: var(--neutral-700);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--neutral-300);
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--neutral-200);
+            color: var(--neutral-700);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background-color: var(--neutral-50);
+        }
+
+        .rating {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .rating-excellent {
+            background-color: rgba(56, 217, 169, 0.15);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .rating-good {
+            background-color: rgba(255, 171, 46, 0.15);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        .platform-navigation {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .platform-navigation h3 {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .platform-navigation h3:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .platform-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .platform-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #FFFFFF;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-link:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: rgba(0, 64, 240, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-container {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary), var(--shadow-lg);
+        }
+
+        .wide-content {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .faq-item {
+                padding: 1.5rem;
+            }
+
+            .comparison-table {
+                font-size: 0.85rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.75rem;
+            }
+
+            .platform-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Logs background - adds a subtle tech pattern -->
+        <div class="logs-bg">
+            <div class="log-container">
+                <!-- This will be populated by JavaScript if desired -->
+            </div>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">Platform Comparison</div>
+                <p class="header-description">Compare cold start behaviors across serverless platforms and optimize your application's response time.</p>
+            </header>
+
+            <main class="faq-content">
+                <div class="faq-header">
+                    <h2>Serverless Cold Start Comparison</h2>
+                    <p>Find the perfect solution for your specific platform and free tier constraints.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>What are cold starts and why do they matter?</h3>
+                    <p>Cold starts occur when a serverless platform needs to allocate resources for an inactive application. This creates a significant delay (from hundreds of milliseconds to 30+ seconds) for the first request after a period of inactivity.</p>
+                    <p>For your users, this means:</p>
+                    <ul>
+                        <li>Frustrating load times on first access</li>
+                        <li>High bounce rates as users lose patience</li>
+                        <li>Failed API calls when timeouts are exceeded</li>
+                        <li>Poor user experience especially for interactive apps</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item wide-content">
+                    <h3>Platform Comparison</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Sleep Policy</th>
+                                <th>Cold Start Time</th>
+                                <th>Keep Alive Effectiveness</th>
+                                <th>Recommended Ping Interval</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>AWS Lambda</strong></td>
+                                <td>Function recycled after ~15-60 min inactivity (varies)</td>
+                                <td>100ms - 10s (depends on runtime/VPC)</td>
+                                <td><span class="rating rating-excellent">Excellent</span></td>
+                                <td>5-10 minutes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Render</strong></td>
+                                <td>Free tier: 15 min inactivity then sleep</td>
+                                <td>20-40 seconds to wake up</td>
+                                <td><span class="rating rating-excellent">Excellent</span></td>
+                                <td>10-12 minutes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Amplify Functions</strong></td>
+                                <td>Same as AWS Lambda</td>
+                                <td>100ms - 5s (typically)</td>
+                                <td><span class="rating rating-excellent">Excellent</span></td>
+                                <td>5 minutes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Heroku</strong></td>
+                                <td>Free tier: 30 min inactivity + 6hr/day forced sleep</td>
+                                <td>10-30 seconds to wake up</td>
+                                <td><span class="rating rating-good">Good*</span></td>
+                                <td>25 minutes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vercel</strong></td>
+                                <td>Serverless functions recycled after inactivity</td>
+                                <td>100ms - 3s (typically)</td>
+                                <td><span class="rating rating-excellent">Excellent</span></td>
+                                <td>5 minutes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><small>* Heroku's 6-hour mandatory sleep per 24 hours cannot be circumvented with pinging</small></p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How does Keep Alive solve these issues?</h3>
+                    <p>Keep Alive sends periodic HTTP requests to your endpoints before they go to sleep, ensuring they stay warm and responsive. Unlike complex DIY solutions, Keep Alive:</p>
+                    <ul>
+                        <li>Works across all major serverless platforms</li>
+                        <li>Requires zero code changes to your application</li>
+                        <li>Provides customizable ping intervals per endpoint</li>
+                        <li>Shows real-time status monitoring</li>
+                        <li>Handles all retry logic and error handling</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Choosing the Right Platform</h3>
+                    <p>When deciding between serverless platforms, consider these factors:</p>
+                    <ul>
+                        <li><strong>Application needs:</strong> API-driven backends do well on Lambda/Vercel, full-stack apps on Render/Heroku</li>
+                        <li><strong>Cold start tolerance:</strong> User-facing apps need consistent response times</li>
+                        <li><strong>Budget constraints:</strong> All platforms have free tiers with different limitations</li>
+                        <li><strong>Development workflow:</strong> Amplify/Vercel integrate well with frontend workflows</li>
+                    </ul>
+                    <p>Keep Alive works with all these platforms, giving you flexibility to choose based on your needs rather than cold start concerns.</p>
+                </div>
+
+                <div class="platform-navigation">
+                    <h3>Platform-Specific Guides</h3>
+                    <div class="platform-links">
+                        <a href="/aws-lambda-guide" class="platform-link">AWS Lambda</a>
+                        <a href="/render-guide" class="platform-link">Render Apps</a>
+                        <a href="/amplify-guide" class="platform-link">Amplify Functions</a>
+                        <a href="/heroku-guide" class="platform-link">Heroku Dynos</a>
+                        <a href="/vercel-guide" class="platform-link">Vercel Functions</a>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a href="/" class="cta-button">Keep Your Services Awake Now</a>
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html">FAQ</a>
+                </nav>
+                <div class="platform-links">
+                    <small>Platform Guides:</small>
+                    <a href="/aws-lambda-guide">AWS Lambda</a>
+                    <a href="/render-guide">Render Apps</a>
+                    <a href="/amplify-guide">Amplify Functions</a>
+                    <a href="/heroku-guide">Heroku Dynos</a>
+                    <a href="/vercel-guide">Vercel Functions</a>
+                    <a href="/platform-comparison" class="active">Platform Comparison</a>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Keep Alive by QUANTUMLAB. Made with ♥ for developers.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

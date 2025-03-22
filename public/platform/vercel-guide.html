@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vercel Serverless Function Cold Start Prevention Guide - Keep your Vercel functions warm and responsive with Keep Alive.">
+    <meta name="theme-color" content="#0040F0">
+    <title>Keep Alive - Vercel Serverless Function Cold Start Prevention Guide</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+    <style>
+        /* Additional styles specific to platform guides */
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h2 {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header p {
+            color: var(--neutral-600);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--neutral-300);
+        }
+
+        .faq-item h3 {
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .faq-item h3:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .faq-item p {
+            color: var(--neutral-700);
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .faq-item ul, .faq-item ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .faq-item ul li, .faq-item ol li {
+            color: var(--neutral-700);
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 0.5rem;
+            box-shadow: none;
+            background: none;
+            border: none;
+            transform: none;
+        }
+
+        .faq-item ul li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: -1rem;
+        }
+
+        .platform-comparison-box {
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--neutral-200);
+            margin-top: 1rem;
+        }
+
+        .comparison-list li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .comparison-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .platform-navigation {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .platform-navigation h3 {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .platform-navigation h3:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .platform-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .platform-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #FFFFFF;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-link:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: rgba(0, 64, 240, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-container {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary), var(--shadow-lg);
+        }
+
+        @media (max-width: 768px) {
+            .faq-item {
+                padding: 1.5rem;
+            }
+
+            .platform-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Logs background - adds a subtle tech pattern -->
+        <div class="logs-bg">
+            <div class="log-container">
+                <!-- This will be populated by JavaScript if desired -->
+            </div>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">Vercel Guide</div>
+                <p class="header-description">Eliminate cold starts in your Vercel serverless functions.</p>
+            </header>
+
+            <main class="faq-content">
+                <div class="faq-header">
+                    <h2>Vercel Serverless Function Cold Start Prevention Guide</h2>
+                    <p>For developers using Vercel's serverless functions and Edge network.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Do Vercel Serverless Functions have cold starts?</h3>
+                    <p>Yes. Vercel's serverless platform is built on AWS Lambda, so functions experience the same cold start issues - container provisioning delay after periods of inactivity.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Are Vercel Serverless Functions different from regular Lambda?</h3>
+                    <p>Slightly. Vercel optimizes the cold start process, but still can't eliminate it completely. Vercel functions typically have 100-500ms cold starts for Node.js, but can be longer for other runtimes or with many dependencies.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How does Keep Alive keep Vercel functions warm?</h3>
+                    <p>Keep Alive sends periodic requests to your Vercel deployment URLs:</p>
+                    <ul>
+                        <li>Works with any Vercel serverless function</li>
+                        <li>No code modifications needed</li>
+                        <li>Supports preview and production environments</li>
+                        <li>Handles region-specific deployments</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Setup guide</h3>
+                    <ol>
+                        <li>Add your Vercel deployment URL to Keep Alive</li>
+                        <li>For API routes, include the full path: <code>https://your-project.vercel.app/api/your-function</code></li>
+                        <li>Set ping interval to 5 minutes (standard for Lambda-based platforms)</li>
+                        <li>Optionally add custom headers if your API requires them</li>
+                    </ol>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Best practices for Vercel</h3>
+                    <ul>
+                        <li><strong>Health checks:</strong> Create lightweight health check endpoints</li>
+                        <li><strong>Static generation:</strong> Use Incremental Static Regeneration where possible</li>
+                        <li><strong>Edge functions:</strong> Consider Edge Functions for latency-sensitive operations</li>
+                        <li><strong>Analytics:</strong> Monitor cold start impact with Vercel Analytics</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Next.js API Routes vs Edge Functions</h3>
+                    <p>Vercel offers multiple function types, each with different cold start characteristics:</p>
+                    <ul>
+                        <li><strong>Serverless Functions (API Routes):</strong> Standard Lambda-based functions with typical cold starts</li>
+                        <li><strong>Edge Functions:</strong> Run on Cloudflare's edge network with faster (but still present) cold starts</li>
+                        <li><strong>Edge Middleware:</strong> Similar to Edge Functions but run before request matching</li>
+                    </ul>
+                    <p>Keep Alive works best with Serverless Functions, which benefit most from warming.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Common Vercel function challenges</h3>
+                    <p>Vercel functions have some unique considerations:</p>
+                    <ul>
+                        <li><strong>Authentication:</strong> If using auth, your ping endpoint may need special handling</li>
+                        <li><strong>Database connections:</strong> Prevent connection pool exhaustion during cold starts</li>
+                        <li><strong>Preview deployments:</strong> Each preview gets its own function instances</li>
+                        <li><strong>Function size limits:</strong> Vercel has stricter size limits than raw Lambda</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Cost considerations</h3>
+                    <p>Keeping Vercel functions warm has minimal cost impact:</p>
+                    <ul>
+                        <li>Hobby tier: No additional cost for executions</li>
+                        <li>Pro/Enterprise: Function executions minimal compared to Vercel's included limits</li>
+                        <li>Performance benefit dramatically outweighs the small cost increase</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Vercel vs other platforms</h3>
+                    <div class="platform-comparison-box">
+                        <p>Vercel's serverless functions have specific characteristics compared to other platforms:</p>
+                        <ul class="comparison-list">
+                            <li><strong>Vercel:</strong> Serverless functions with significant cold starts → Fully mitigated with Keep Alive</li>
+                            <li><strong>AWS Lambda:</strong> Similar architecture but more configurability → Fully mitigated</li>
+                            <li><strong>Render/Heroku:</strong> Container-based with sleep policies → Different warming needs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="platform-navigation">
+                    <h3>Other Platform Guides</h3>
+                    <div class="platform-links">
+                        <a href="/aws-lambda-guide" class="platform-link">AWS Lambda</a>
+                        <a href="/render-guide" class="platform-link">Render Apps</a>
+                        <a href="/amplify-guide" class="platform-link">Amplify Functions</a>
+                        <a href="/heroku-guide" class="platform-link">Heroku Dynos</a>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a href="/" class="cta-button">Keep Your Vercel Functions Warm Now</a>
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html">FAQ</a>
+                </nav>
+                <div class="platform-links">
+                    <small>Platform Guides:</small>
+                    <a href="/aws-lambda-guide">AWS Lambda</a>
+                    <a href="/render-guide">Render Apps</a>
+                    <a href="/amplify-guide">Amplify Functions</a>
+                    <a href="/heroku-guide">Heroku Dynos</a>
+                    <a href="/vercel-guide" class="active">Vercel Functions</a>
+                    <a href="/platform-comparison">Platform Comparison</a>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Keep Alive by QUANTUMLAB. Made with ♥ for developers.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

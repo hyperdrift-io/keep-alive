@@ -118,6 +118,27 @@ const app = new Elysia()
       path = '/index.html';
     }
 
+    // Handle platform guide routes
+    if (path === '/aws-lambda' || path === '/aws-lambda-guide') {
+      path = '/platform/aws-lambda-guide.html';
+    } else if (path === '/render' || path === '/render-guide') {
+      path = '/platform/render-guide.html';
+    } else if (path === '/amplify' || path === '/amplify-guide') {
+      path = '/platform/amplify-guide.html';
+    } else if (path === '/heroku' || path === '/heroku-guide') {
+      path = '/platform/heroku-guide.html';
+    } else if (path === '/vercel' || path === '/vercel-guide') {
+      path = '/platform/vercel-guide.html';
+    } else if (path === '/platform-comparison' || path === '/why') {
+      path = '/platform/platform-comparison.html';
+    }
+
+    // Handle static content routes (keeping backward compatibility)
+    if (path.startsWith('/img/')) {
+      const imgPath = path.replace('/img/', '/static/img/');
+      path = imgPath;
+    }
+
     const filePath = join(process.cwd(), 'public', path);
 
     try {

@@ -1,208 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Keep Alive - Advanced URI Health Monitoring System. Prevent cold starts and keep your services responsive for the best user experience.">
-    <meta name="theme-color" content="#121726">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Keep Alive - Advanced URI Health Monitoring System. Prevent cold starts and keep your services responsive for the best user experience."
+    />
+    <meta name="theme-color" content="#121726" />
     <title>Keep Alive - URI Health Monitor</title>
-    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Nohemi:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/style.css">
-    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
-</head>
-<body>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Nohemi:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script
+      src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js"
+      defer
+    ></script>
+  </head>
+  <body>
     <div id="app" x-data="wakeupApp()">
-        <div class="logs-bg" x-show="logs.length > 0">
-            <template x-for="log in logs" :key="log">
-                <div class="log-line" x-text="log"></div>
-            </template>
-        </div>
+      <!-- Background logs for visual effect -->
+      <div class="logs-bg" x-show="logs.length > 0">
+        <template x-for="log in logs" :key="log">
+          <div class="log-line" x-text="log"></div>
+        </template>
+      </div>
 
-        <!-- Notification system -->
-        <div
-            class="notification"
-            :class="{
+      <!-- Notification system -->
+      <div
+        class="notification"
+        :class="{
                 'show': notification.show,
                 'error': notification.isError
             }"
-            x-show="notification.show"
-            x-transition
-        >
-            <div class="notification-content">
-                <svg x-show="!notification.isError" xmlns="http://www.w3.org/2000/svg" class="notification-icon success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M5 12l5 5l10 -10" />
-                </svg>
-                <svg x-show="notification.isError" xmlns="http://www.w3.org/2000/svg" class="notification-icon error" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                    <path d="M12 9v4" />
-                    <path d="M12 16v.01" />
-                </svg>
-                <span x-text="notification.message"></span>
-            </div>
+        x-show="notification.show"
+        x-transition
+      >
+        <div class="notification-content">
+          <svg
+            x-show="!notification.isError"
+            xmlns="http://www.w3.org/2000/svg"
+            class="notification-icon success"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M5 12l5 5l10 -10" />
+          </svg>
+          <svg
+            x-show="notification.isError"
+            xmlns="http://www.w3.org/2000/svg"
+            class="notification-icon error"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+            <path d="M12 9v4" />
+            <path d="M12 16v.01" />
+          </svg>
+          <span x-text="notification.message"></span>
         </div>
+      </div>
 
-        <div class="container">
-            <header>
-                <h1>Keep Alive<div class="title-accent"></div></h1>
-                <div class="subtitle">URI Health Monitor</div>
-                <p class="header-description">Keep your services responsive and prevent cold starts.</p>
-            </header>
+      <div class="container">
+        <header>
+          <h1>
+            Keep Alive
+            <div class="title-accent"></div>
+          </h1>
+          <div class="subtitle">URI Health Monitor</div>
+          <p class="header-description">
+            Keep your services responsive and prevent cold starts with automated
+            health checks.
+          </p>
+        </header>
 
-            <main>
-                <form @submit.prevent="addURI">
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            x-model="newURL"
-                            placeholder="https://example.com"
-                            :class="{ 'invalid': !isValidURL && newURL }"
-                        >
-                        <button type="submit" :disabled="!isValidURL || !newURL">Connect URI</button>
-                    </div>
-                    <div class="error-message" x-show="!isValidURL && newURL">
-                        Please enter a valid URL
-                    </div>
-                </form>
+        <main>
+          <!-- Mobile platform guides - shows only on mobile -->
 
-                <div class="uri-list" x-show="uris.length > 0">
-                    <h2>Monitored Endpoints</h2>
-                    <ul>
-                        <template x-for="uri in uris" :key="uri.id">
-                            <li x-data="{ isExpanded: false }"
-                               :class="{
+          <!-- Main URI form -->
+          <form @submit.prevent="addURI">
+            <div class="form-group">
+              <input
+                type="text"
+                x-model="newURL"
+                placeholder="https://example.com"
+                :class="{ 'invalid': !isValidURL && newURL }"
+              />
+              <button type="submit" :disabled="!isValidURL || !newURL">
+                Connect URI
+              </button>
+            </div>
+            <div class="error-message" x-show="!isValidURL && newURL">
+              Please enter a valid URL
+            </div>
+          </form>
+
+          <!-- URI list section -->
+          <div class="uri-list" x-show="uris.length > 0">
+            <h2>Monitored Endpoints</h2>
+            <ul>
+              <template x-for="uri in uris" :key="uri.id">
+                <li
+                  x-data="{ isExpanded: false }"
+                  :class="{
                                    [uri.status]: true,
                                    'new-item': uri.isNew,
                                    'settings-expanded': uri.showSettings
                                }"
-                               x-show.transition="true">
-                                <div class="uri-info-row">
-                                    <div class="uri-info">
-                                        <span class="uri-status" x-text="uri.status"></span>
-                                        <span class="uri-url" x-text="uri.url"></span>
-                                        <span class="current-interval" x-show="uri.pingInterval">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-                                                <path d="M12 7v5l3 3" />
-                                            </svg>
-                                            <span x-text="uri.pingInterval"></span> min
-                                        </span>
-                                        <span class="uri-last-checked" x-text="uri.lastChecked ? 'Last checked: ' + new Date(uri.lastChecked).toLocaleString() : 'Not checked yet'"></span>
-                                    </div>
-                                    <div class="uri-actions">
-                                        <button class="edit-btn" @click="editURI(uri)">Edit</button>
-                                        <button class="delete-btn" @click="deleteURI(uri.id)">Delete</button>
-                                        <button
-                                            class="endpoint-settings-btn"
-                                            :class="{ 'active': uri.showSettings }"
-                                            @click.stop="toggleEndpointSettings(uri)"
-                                            title="Endpoint Settings">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
-                                                <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Endpoint settings panel -->
-                                <div class="endpoint-settings-container" :class="{ 'active': uri.showSettings }">
-                                    <div class="endpoint-settings-panel">
-                                        <h4>Ping Interval Settings</h4>
-                                        <p class="endpoint-settings-description">
-                                            Set how often this endpoint should be pinged.
-                                        </p>
-                                        <div class="interval-options">
-                                            <button
-                                                class="interval-option"
-                                                :class="{ 'selected': uri.pingInterval === 1 }"
-                                                @click.stop="setEndpointPingInterval(uri.id, 1)">
-                                                1 min
-                                            </button>
-                                            <button
-                                                class="interval-option"
-                                                :class="{ 'selected': uri.pingInterval === 5 }"
-                                                @click.stop="setEndpointPingInterval(uri.id, 5)">
-                                                5 min
-                                            </button>
-                                            <button
-                                                class="interval-option"
-                                                :class="{ 'selected': uri.pingInterval === 10 }"
-                                                @click.stop="setEndpointPingInterval(uri.id, 10)">
-                                                10 min
-                                            </button>
-                                        </div>
-                                        <button class="reset-interval-btn" @click.stop="removeEndpointPingInterval(uri.id)">
-                                            Reset to default
-                                        </button>
-                                    </div>
-                                </div>
-                            </li>
-                        </template>
-                    </ul>
-
-                    <!-- Global Settings Info -->
-                    <div class="global-settings-info">
-                        <div class="global-settings-header">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M12 8H12.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <path d="M11 12H12V16H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>Default ping interval: <strong x-text="`${defaultPingInterval} min`"></strong></span>
-                        </div>
-                        <p class="global-settings-description">Each endpoint can have its own ping interval or use the default value</p>
-                    </div>
-                </div>
-
-                <div class="empty-state" x-show="uris.length === 0">
-                    <p>No URIs are connected yet. Add one above to establish a connection.</p>
-                </div>
-            </main>
-
-            <footer class="site-footer">
-                <nav class="footer-nav">
-                    <a href="/" class="active">Home</a>
-                    <a href="/cold-starts.html">Cold Starts</a>
-                    <a href="/about.html">About</a>
-                    <a href="/faq.html">FAQ</a>
-                </nav>
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Keep Alive. All rights reserved.</p>
-                </div>
-            </footer>
-        </div>
-
-        <div class="modal" x-show="showEditModal" @click.away="showEditModal = false">
-            <div class="modal-content">
-                <h3>Edit Connection</h3>
-                <form @submit.prevent="updateURI">
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            x-model="editingURL"
-                            placeholder="https://example.com"
-                            :class="{ 'invalid': !isEditURLValid && editingURL }"
+                  x-show.transition="true"
+                >
+                  <div class="uri-info-row">
+                    <div class="uri-info">
+                      <span class="uri-status" x-text="uri.status"></span>
+                      <span class="uri-url" x-text="uri.url"></span>
+                      <span class="current-interval" x-show="uri.pingInterval">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="icon"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          stroke-width="2"
+                          stroke="currentColor"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
                         >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                          <path d="M12 7v5l3 3" />
+                        </svg>
+                        <span x-text="uri.pingInterval"></span> min
+                      </span>
+                      <span
+                        class="uri-last-checked"
+                        x-text="uri.lastChecked ? 'Last checked: ' + new Date(uri.lastChecked).toLocaleString() : 'Not checked yet'"
+                      ></span>
                     </div>
-                    <div class="error-message" x-show="!isEditURLValid && editingURL">
-                        Please enter a valid URL
+                    <div class="uri-actions">
+                      <button
+                        class="endpoint-settings-btn"
+                        :class="{ 'active': uri.showSettings }"
+                        @click.stop="toggleEndpointSettings(uri)"
+                        title="Endpoint Settings"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="icon"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          stroke-width="2"
+                          stroke="currentColor"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path
+                            d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
+                          />
+                          <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                        </svg>
+                      </button>
                     </div>
-                    <div class="form-actions">
-                        <button type="button" @click="showEditModal = false">Cancel</button>
-                        <button type="submit" :disabled="!isEditURLValid || !editingURL">Save</button>
+                  </div>
+
+                  <!-- Endpoint settings panel -->
+                  <div
+                    class="endpoint-settings-container"
+                    :class="{ 'active': uri.showSettings }"
+                  >
+                    <div class="endpoint-settings-panel">
+                      <p class="endpoint-settings-description">
+                        Set how often this endpoint should be pinged.
+                      </p>
+                      <div class="interval-options">
+                        <button
+                          class="interval-option"
+                          :class="{ 'selected': uri.pingInterval === 1 }"
+                          @click.stop="setEndpointPingInterval(uri.id, 1)"
+                        >
+                          1 min
+                        </button>
+                        <button
+                          class="interval-option"
+                          :class="{ 'selected': uri.pingInterval === 5 }"
+                          @click.stop="setEndpointPingInterval(uri.id, 5)"
+                        >
+                          5 min
+                        </button>
+                        <button
+                          class="interval-option"
+                          :class="{ 'selected': uri.pingInterval === 10 }"
+                          @click.stop="setEndpointPingInterval(uri.id, 10)"
+                        >
+                          10 min
+                        </button>
+                      </div>
+
+
+                      <div class="settings-actions">
+                        <button class="edit-btn" @click="editURI(uri)">
+                          Edit URI
+                        </button>
+                        <button class="delete-btn" @click="deleteURI(uri.id)">
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                </form>
+                  </div>
+                </li>
+              </template>
+            </ul>
+
+          </div>
+
+          <!-- Empty state when no URIs are added -->
+          <div class="empty-state" x-show="uris.length === 0">
+            <p>
+              No URIs are connected yet. Add one above to establish a
+              connection.
+            </p>
+          </div>
+        </main>
+
+        <footer class="site-footer">
+          <nav class="footer-nav">
+            <a href="/" class="active">Home</a>
+            <a href="/platform-comparison">Platform Comparison</a>
+            <a href="/cold-starts.html">Cold Starts</a>
+            <a href="/about.html">About</a>
+            <a href="/faq.html">FAQ</a>
+          </nav>
+          <div class="platform-links">
+            <small>Platform Guides:</small>
+            <a href="/aws-lambda-guide">AWS Lambda</a>
+            <a href="/render-guide">Render</a>
+            <a href="/amplify-guide">Amplify</a>
+            <a href="/heroku-guide">Heroku</a>
+            <a href="/vercel-guide">Vercel</a>
+          </div>
+          <div class="footer-bottom">
+            <p>&copy; 2025 Keep Alive. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+
+      <!-- Edit URI Modal -->
+      <div
+        class="modal"
+        x-show="showEditModal"
+        x-cloak
+        x-transition.opacity
+        @click.away="showEditModal = false"
+      >
+        <div class="modal-content">
+          <h3>Edit Connection</h3>
+          <form @submit.prevent="updateURI">
+            <div class="form-group">
+              <input
+                type="text"
+                x-model="editingURL"
+                placeholder="https://example.com"
+                :class="{ 'invalid': !isEditURLValid && editingURL }"
+              />
             </div>
+            <div class="error-message" x-show="!isEditURLValid && editingURL">
+              Please enter a valid URL
+            </div>
+            <div class="form-actions">
+              <button type="button" @click="showEditModal = false">
+                Cancel
+              </button>
+              <button type="submit" :disabled="!isEditURLValid || !editingURL">
+                Save
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
     <script src="/app.js"></script>
-</body>
+  </body>
 </html>

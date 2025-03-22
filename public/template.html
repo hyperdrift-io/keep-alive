@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Keep Alive - Advanced URI Health Monitoring System. Prevent cold starts and keep your services responsive for the best user experience.">
+    <meta name="theme-color" content="#121726">
+    <title>Keep Alive - URI Health Monitor</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Nohemi:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+
+    <!-- Include the components -->
+    <script src="/components/layout.js"></script>
+    <script>
+        // Initialize layout components when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            includeLayoutComponents();
+        });
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <!-- Empty header that will be populated by the component -->
+            <header></header>
+
+            <main>
+                <!-- Your page-specific content goes here -->
+                <h2>Page Content</h2>
+                <p>This is the unique content for this page. The header and footer are reusable components.</p>
+            </main>
+
+            <!-- Empty footer that will be populated by the component -->
+            <footer class="site-footer"></footer>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AWS Amplify Cold Start Prevention Guide - Keep your Amplify functions warm and responsive with Keep Alive.">
+    <meta name="theme-color" content="#0040F0">
+    <title>Keep Alive - AWS Amplify Cold Start Prevention Guide</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+    <style>
+        /* Additional styles specific to platform guides */
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-header h2 {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .faq-header p {
+            color: var(--neutral-600);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            background-color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--neutral-200);
+            transition: all var(--transition-normal);
+        }
+
+        .faq-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--neutral-300);
+        }
+
+        .faq-item h3 {
+            color: var(--neutral-800);
+            margin-bottom: 1.25rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .faq-item h3:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .faq-item p {
+            color: var(--neutral-700);
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .faq-item ul, .faq-item ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .faq-item ul li, .faq-item ol li {
+            color: var(--neutral-700);
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 0.5rem;
+            box-shadow: none;
+            background: none;
+            border: none;
+            transform: none;
+        }
+
+        .faq-item ul li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: -1rem;
+        }
+
+        .platform-comparison-box {
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--neutral-200);
+            margin-top: 1rem;
+        }
+
+        .comparison-list li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .comparison-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .platform-navigation {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .platform-navigation h3 {
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .platform-navigation h3:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .platform-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .platform-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: #FFFFFF;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-link:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: rgba(0, 64, 240, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-container {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary), var(--shadow-lg);
+        }
+
+        @media (max-width: 768px) {
+            .faq-item {
+                padding: 1.5rem;
+            }
+
+            .platform-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Logs background - adds a subtle tech pattern -->
+        <div class="logs-bg">
+            <div class="log-container">
+                <!-- This will be populated by JavaScript if desired -->
+            </div>
+        </div>
+
+        <div class="container">
+            <header>
+                <h1>Keep Alive<div class="title-accent"></div></h1>
+                <div class="subtitle">AWS Amplify Guide</div>
+                <p class="header-description">Eliminate cold starts from your Amplify functions.</p>
+            </header>
+
+            <main class="faq-content">
+                <div class="faq-header">
+                    <h2>AWS Amplify Cold Start Prevention Guide</h2>
+                    <p>For developers using AWS Amplify's serverless functions.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How do Amplify serverless functions handle cold starts?</h3>
+                    <p>AWS Amplify serverless functions are AWS Lambda functions under the hood, so they follow the same cold start behavior. Unused functions get recycled, creating latency spikes.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Can I prevent Amplify function cold starts?</h3>
+                    <p>Yes. Unlike pure Lambda, Amplify provides API Gateway endpoints automatically for your functions, making them easier to keep warm.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>How does Keep Alive keep Amplify functions warm?</h3>
+                    <p>Keep Alive pings your function's API Gateway URL at regular intervals:</p>
+                    <ul>
+                        <li>Ensures container remains provisioned</li>
+                        <li>Works with JS/TS, Python or other Amplify-supported runtimes</li>
+                        <li>Maintains separate warm instances for each environment (dev/prod)</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Setup guide</h3>
+                    <ol>
+                        <li>Identify your Amplify function's URL pattern:
+                           <code>https://[api-id].execute-api.[region].amazonaws.com/[stage]/[function-name]</code></li>
+                        <li>Add this URL to Keep Alive</li>
+                        <li>Set ping interval to 5 minutes (recommended for Lambda)</li>
+                        <li>Optionally add authentication headers if your endpoint requires them</li>
+                    </ol>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Best practices for Amplify functions</h3>
+                    <ul>
+                        <li><strong>Dedicated endpoint:</strong> Create lightweight ping endpoints</li>
+                        <li><strong>Dependency management:</strong> Minimize dependencies for faster cold start recovery</li>
+                        <li><strong>Function combination:</strong> Consider bundling critical functions together</li>
+                        <li><strong>Error handling:</strong> Ensure proper error handling in your warmup path</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Common Amplify function challenges</h3>
+                    <p>Amplify functions have some unique considerations compared to standalone Lambda:</p>
+                    <ul>
+                        <li><strong>Authentication:</strong> If using Cognito or API keys, your ping may need auth headers</li>
+                        <li><strong>Environment variables:</strong> Environment-specific configs need separate pings</li>
+                        <li><strong>GraphQL resolvers:</strong> Custom resolvers need their own keep-alive strategy</li>
+                        <li><strong>Multi-environment:</strong> Dev/test/prod each need separate ping configurations</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Costs and performance impact</h3>
+                    <p>Keeping Amplify functions warm has minimal cost impact while significantly improving user experience:</p>
+                    <ul>
+                        <li>5-minute pings = ~8,640 invocations per month (well within free tier)</li>
+                        <li>Cold start improvement: 500ms-5s → consistent 50-100ms responses</li>
+                        <li>Better user retention due to snappy initial responses</li>
+                    </ul>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Amplify vs other platforms</h3>
+                    <div class="platform-comparison-box">
+                        <p>AWS Amplify functions have specific characteristics compared to other platforms:</p>
+                        <ul class="comparison-list">
+                            <li><strong>Amplify:</strong> Built on Lambda with integrated auth → Fully mitigated with Keep Alive</li>
+                            <li><strong>Pure Lambda:</strong> More configuration options but similar cold start behavior → Same mitigation</li>
+                            <li><strong>Vercel/Netlify:</strong> Similar Lambda-based architecture → Similar warming benefits</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="platform-navigation">
+                    <h3>Other Platform Guides</h3>
+                    <div class="platform-links">
+                        <a href="/aws-lambda-guide" class="platform-link">AWS Lambda</a>
+                        <a href="/render-guide" class="platform-link">Render Apps</a>
+                        <a href="/heroku-guide" class="platform-link">Heroku Dynos</a>
+                        <a href="/vercel-guide" class="platform-link">Vercel Functions</a>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a href="/" class="cta-button">Keep Your Amplify Functions Warm Now</a>
+                </div>
+            </main>
+
+            <footer class="site-footer">
+                <nav class="footer-nav">
+                    <a href="/">Home</a>
+                    <a href="/cold-starts.html">Cold Starts</a>
+                    <a href="/about.html">About</a>
+                    <a href="/faq.html">FAQ</a>
+                </nav>
+                <div class="platform-links">
+                    <small>Platform Guides:</small>
+                    <a href="/aws-lambda-guide">AWS Lambda</a>
+                    <a href="/render-guide">Render Apps</a>
+                    <a href="/amplify-guide" class="active">Amplify Functions</a>
+                    <a href="/heroku-guide">Heroku Dynos</a>
+                    <a href="/vercel-guide">Vercel Functions</a>
+                    <a href="/platform-comparison">Platform Comparison</a>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Keep Alive by QUANTUMLAB. Made with ♥ for developers.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
