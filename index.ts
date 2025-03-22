@@ -131,6 +131,8 @@ const app = new Elysia()
       path = '/platform/vercel-guide.html';
     } else if (path === '/platform-comparison' || path === '/why') {
       path = '/platform/platform-comparison.html';
+    } else if (path === '/journey' || path === '/development-journey') {
+      path = '/journey/index.html';
     }
 
     // Handle static content routes (keeping backward compatibility)

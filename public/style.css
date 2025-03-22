@@ -275,7 +275,6 @@ ul {
 }
 
 li {
-    padding: 1.5rem;
     margin-bottom: 1.25rem;
     border-radius: var(--radius-md);
     background-color: #FFFFFF;
