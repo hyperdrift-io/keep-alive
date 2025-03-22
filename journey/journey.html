@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Alive Protocol - Development Journey</title>
+    <style>
+        :root {
+            --primary-color: #14f1d9;
+            --secondary-color: #6c57ff;
+            --dark-bg: #0a0e17;
+            --darker-bg: #050914;
+            --medium-surface: #1e2639;
+            --light-surface: #2d3448;
+            --text-color: #e9eeff;
+            --muted-text: #8494b7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--dark-bg);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--medium-surface);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(20, 241, 217, 0.4);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--secondary-color);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 30px;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color));
+            box-shadow: 0 0 10px rgba(108, 87, 255, 0.6);
+        }
+
+        .milestone {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 60px;
+        }
+
+        .milestone::before {
+            content: '';
+            position: absolute;
+            left: 22px;
+            top: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .commit-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--muted-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .card {
+            background-color: var(--medium-surface);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .lesson {
+            background-color: var(--light-surface);
+            border-left: 3px solid var(--secondary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .lesson h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--darker-bg);
+            color: var(--primary-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        ul {
+            list-style-position: inside;
+            margin: 1rem 0 1.5rem 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--medium-surface);
+            color: var(--muted-text);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Keep Alive Protocol - Development Journey</h1>
+            <p>A chronicle of the evolution from "WakeUp" to the "Keep Alive Protocol"</p>
+        </header>
+
+        <main>
+            <div class="timeline">
+                <div class="milestone">
+                    <div class="commit-id">ac48470 - Initial Commit</div>
+                    <div class="card">
+                        <h3>Project Initialization - "WakeUp"</h3>
+                        <p>The project started as "WakeUp", a simple URI health monitoring tool built with Elysia.js and Bun runtime.</p>
+                        <ul>
+                            <li>Basic URI monitoring functionality with 5-minute intervals</li>
+                            <li>Simple database setup using LowDB</li>
+                            <li>Minimal frontend with Alpine.js for reactivity</li>
+                            <li>Support for adding, editing, and deleting URIs</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>Starting with a clear, focused MVP allowed for rapid setup of the core functionality. Using lightweight tools (Elysia, Alpine.js, LowDB) enabled quick development without overhead.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="milestone">
+                    <div class="commit-id">155b82e - Adding Tests</div>
+                    <div class="card">
+                        <h3>Testing Infrastructure</h3>
+                        <p>Added test infrastructure to ensure reliability as the project grows.</p>
+                        <ul>
+                            <li>Set up end-to-end testing</li>
+                            <li>Created test database separation</li>
+                            <li>Added gitignore updates to handle test artifacts</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>Adding tests early in the development process helps establish good practices for reliable future enhancements. Test infrastructure should be set up before features become too complex to retroactively test.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="milestone">
+                    <div class="commit-id">54da1a9 - Enhanced URL Validation</div>
+                    <div class="card">
+                        <h3>Error Handling Improvements</h3>
+                        <p>Enhanced URL validation to check for duplicates and improved error messaging systems.</p>
+                        <ul>
+                            <li>Implemented duplicate URL detection</li>
+                            <li>Improved frontend alert handling for better user feedback</li>
+                            <li>Enhanced error messaging for invalid URLs</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>User input validation is critical for a good user experience. Helpful error messages prevent frustration, and checking for duplicates before submission prevents data integrity issues. Frontend validation should always be paired with backend validation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="milestone">
+                    <div class="commit-id">d125b6d - URI-specific Ping Intervals</div>
+                    <div class="card">
+                        <h3>Custom Ping Intervals & Live Reload</h3>
+                        <p>Major feature enhancement to support customizable ping intervals for individual URIs.</p>
+                        <ul>
+                            <li>Added support for per-URI ping interval configuration</li>
+                            <li>Enhanced database schema to include global ping interval settings</li>
+                            <li>Implemented live reload functionality for development</li>
+                            <li>Created API endpoints for managing URI intervals</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>Flexibility in configuration is key to accommodating diverse user needs. The one-size-fits-all approach of 5-minute intervals wasn't suitable for all scenarios. Allowing customization per URI significantly improved the tool's utility. Development tools like live reload improve developer productivity.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="milestone">
+                    <div class="commit-id">69fdf6a - Design Documentation</div>
+                    <div class="card">
+                        <h3>Brand Evolution & Design System</h3>
+                        <p>Created comprehensive design documentation for the HyperBridge protocol, including color palette, typography, and key design elements.</p>
+                        <ul>
+                            <li>Established a modern, dark-themed design system</li>
+                            <li>Defined color palette with cyan and purple accents</li>
+                            <li>Documented typography and animation effects</li>
+                            <li>Laid groundwork for consistent component styling</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>A well-defined design system is essential for consistent user experience and efficient development. Documenting design decisions early creates a foundation for cohesive UI/UX as the project scales. Brand identity and visual design significantly impact how users perceive the product's quality.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="milestone">
+                    <div class="commit-id">bd268c6 - Rebranding to Keep Alive Protocol</div>
+                    <div class="card">
+                        <h3>Comprehensive Rebrand & Feature Enhancement</h3>
+                        <p>Major refactoring that rebranded the application from "WakeUp" to "Keep Alive Protocol" with significant UI improvements.</p>
+                        <ul>
+                            <li>Complete interface redesign with dark theme and modern styling</li>
+                            <li>Enhanced URI monitoring with improved error handling</li>
+                            <li>Removed development-specific code for production readiness</li>
+                            <li>Updated documentation to reflect new branding</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>Rebranding should be a comprehensive process that touches all aspects of the application. The new "Keep Alive Protocol" name better communicated the purpose and sophistication of the tool. Removing development-specific code before production is essential for performance and security. User experience improvements should be driven by both aesthetics and functionality.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="milestone">
+                    <div class="commit-id">fbce370 - Platform Guides & Enhanced Routing</div>
+                    <div class="card">
+                        <h3>Platform-specific Guides & Global Settings</h3>
+                        <p>Added support for platform-specific guides and enhanced the routing system along with UI improvements.</p>
+                        <ul>
+                            <li>Created guides for AWS Lambda, Render, Amplify, Heroku, and Vercel</li>
+                            <li>Implemented global settings panel for ping intervals</li>
+                            <li>Enhanced notification system for better user feedback</li>
+                            <li>Refactored frontend code with component-based architecture</li>
+                            <li>Improved responsive layout according to design standards</li>
+                        </ul>
+
+                        <div class="lesson">
+                            <h4>Lesson Learned:</h4>
+                            <p>Platform-specific documentation helps users implement solutions in their own environments. A component-based architecture improves maintainability and reusability. Global settings provide users with centralized control over application behavior. Refactoring for better organization pays dividends in long-term maintainability.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Key Transformations</h2>
+                <p>Throughout the development journey, several significant transformations occurred:</p>
+
+                <h3>Technical Evolution</h3>
+                <ul>
+                    <li>From basic interval monitoring to customizable per-URI settings</li>
+                    <li>From simple error handling to comprehensive validation and user feedback</li>
+                    <li>From monolithic structure to component-based architecture</li>
+                    <li>From development-focused to production-ready code</li>
+                </ul>
+
+                <h3>Design Evolution</h3>
+                <ul>
+                    <li>From simple light theme to sophisticated dark mode with accent colors</li>
+                    <li>From basic layout to responsive, modern interface</li>
+                    <li>From generic styling to a comprehensive design system</li>
+                    <li>From "WakeUp" branding to the more professional "Keep Alive Protocol"</li>
+                </ul>
+
+                <h3>User Experience Evolution</h3>
+                <ul>
+                    <li>From minimal configuration to extensive customization options</li>
+                    <li>From generic tool to platform-specific guidance</li>
+                    <li>From basic notifications to an enhanced feedback system</li>
+                    <li>From fixed monitoring intervals to flexible, user-defined schedules</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Overall Lessons Learned</h2>
+
+                <div class="lesson">
+                    <h4>Start Simple, Then Expand</h4>
+                    <p>Beginning with a minimal viable product allowed for quick establishment of core functionality before adding complexity. This approach helped identify what was truly needed in the application.</p>
+                </div>
+
+                <div class="lesson">
+                    <h4>User-Centered Development</h4>
+                    <p>Features like customizable ping intervals and platform-specific guides demonstrated the importance of understanding user needs and workflows. The most valuable enhancements came from considering actual use cases.</p>
+                </div>
+
+                <div class="lesson">
+                    <h4>Design System Importance</h4>
+                    <p>Establishing a cohesive design system early paid dividends in consistency and development efficiency. A strong visual identity helps users connect with the product.</p>
+                </div>
+
+                <div class="lesson">
+                    <h4>Code Organization Evolution</h4>
+                    <p>The progression from monolithic structure to component-based architecture improved maintainability. Breaking down complex functionality into manageable, reusable pieces made the codebase more sustainable.</p>
+                </div>
+
+                <div class="lesson">
+                    <h4>Testing as Foundation</h4>
+                    <p>Implementing testing early provided confidence during refactoring and feature addition. Tests served as documentation of expected behavior and prevented regressions.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Keep Alive Protocol Development Journey | Created on <span id="current-date"></span></p>
+            <script>
+                document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+            </script>
+        </footer>
+    </div>
+</body>
+</html>
