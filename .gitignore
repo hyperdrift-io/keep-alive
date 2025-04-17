@@ -54,3 +54,6 @@ build/
 *.tmp
 .temp
 .tmp
+
+# Parcel build
+.parcel-cache/

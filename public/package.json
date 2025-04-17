@@ -1,0 +1,6 @@
+{
+  "name": "wakeup-frontend",
+  "version": "1.0.0",
+  "source": ["*.html"],
+  "browserslist": "> 0.5%, last 2 versions, not dead"
+}

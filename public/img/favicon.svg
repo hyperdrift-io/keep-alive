@@ -1,10 +1,14 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="12" fill="#0A0E17"/>
-  <path d="M12 32H52" stroke="#14F1D9" stroke-width="4" stroke-linecap="round"/>
-  <path d="M32 12L32 52" stroke="#6C57FF" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="32" cy="32" r="8" fill="#0A0E17" stroke="#14F1D9" stroke-width="2"/>
-  <circle cx="32" cy="32" r="4" fill="#14F1D9"/>
-  <path d="M16 16L48 48" stroke="#14F1D9" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 4"/>
-  <path d="M48 16L16 48" stroke="#6C57FF" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 4"/>
-  <circle cx="32" cy="32" r="16" stroke="#14F1D9" stroke-width="1" stroke-dasharray="1 3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <style>
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.2; }
+      50% { opacity: 1; }
+      100% { opacity: 0.2; }
+    }
+  </style>
+  <circle cx="16" cy="16" r="14" fill="#3498db" />
+  <path class="pulse" d="M8 16 L14 16 L16 10 L18 22 L22 16 L28 16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

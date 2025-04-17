@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: "wakeup",
+    name: "keepalive",
     script: "bun run index.ts",
     env: {
       NODE_ENV: "production",

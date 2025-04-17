@@ -1,21 +1,26 @@
 {
-  "name": "wakeup",
-  "module": "index.ts",
-  "type": "module",
+  "name": "keepalive",
   "dependencies": {
     "elysia": "^1.2.0",
     "@elysiajs/cron": "^1.2.0",
     "lowdb": "^7.0.1"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "parcel": "^2.14.4",
+    "vite": "^6.3.1",
+    "vite-plugin-html-minify": "^1.0.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "bun --watch index.ts",
+    "dev": "vite",
     "start": "bun index.ts",
-    "test": "TESTING=true bun test"
+    "test": "TESTING=true bun test",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist/",
+    "build:clean": "bun run clean && bun run build"
   }
 }

@@ -19,8 +19,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           strip_components: 0
           overwrite: true
-          source: "package.json,ecosystem.config.cjs,index.ts,*.ts,scripts/deploy.sh,scripts/**,public/**,db.json,README.md,.gitignore"
-          target: "~/hyperdrift/wakeup"
+          source: "package.json,ecosystem.config.cjs,index.ts,*.ts,scripts/deploy.sh,scripts/build.js,scripts/**,public/**,db.json,README.md,.gitignore"
+          target: "~/hyperdrift/keepalive"
 
       - name: Execute deploy script
         uses: appleboy/ssh-action@v1.0.0
@@ -29,7 +29,7 @@ jobs:
           username: yannvr
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/hyperdrift/wakeup/logs
-            cd ~/hyperdrift/wakeup
-            chmod +x ~/hyperdrift/wakeup/scripts/deploy.sh
+            mkdir -p ~/hyperdrift/keepalive/logs
+            cd ~/hyperdrift/keepalive
+            chmod +x ~/hyperdrift/keepalive/scripts/deploy.sh
             ./scripts/deploy.sh

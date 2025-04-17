@@ -2,8 +2,8 @@
 set -e
 
 # Navigate to app directory, creating it if needed
-mkdir -p ~/hyperdrift/wakeup
-cd ~/hyperdrift/wakeup
+mkdir -p ~/hyperdrift/keepalive
+cd ~/hyperdrift/keepalive
 
 # The git pull is no longer needed since we're copying files directly in the GitHub action
 # but keeping it as a fallback
@@ -13,7 +13,7 @@ if [ ! -f package.json ]; then
   if [ -d .git ]; then
     git pull
   else
-    git clone https://github.com/yannvr/wakeup.git .
+    git clone https://github.com/yannvr/keepalive.git .
   fi
 fi
 
@@ -57,13 +57,20 @@ if ! command -v pm2 &> /dev/null; then
   npm install -g pm2
 fi
 
+# Build the frontend with Vite (minified)
+echo "Building frontend with Vite..."
+bun run build
+
+echo "Deploying files..."
+# (Add your deployment logic here, e.g., rsync, scp, etc.)
+
 # Start/Restart the app with PM2
 if [ -f ecosystem.config.cjs ]; then
   echo "Using ecosystem.config.cjs with PM2"
   # Check if the app is already running
-  if pm2 list | grep -q "wakeup"; then
+  if pm2 list | grep -q "keepalive"; then
     echo "Restarting existing app with PM2"
-    pm2 restart wakeup
+    pm2 restart keepalive
   else
     echo "Starting new app with PM2"
     pm2 start ecosystem.config.cjs
@@ -71,12 +78,12 @@ if [ -f ecosystem.config.cjs ]; then
 else
   echo "ecosystem.config.cjs not found, starting app with PM2 directly"
   # Check if the app is already running
-  if pm2 list | grep -q "wakeup"; then
+  if pm2 list | grep -q "keepalive"; then
     echo "Restarting existing app with PM2"
-    pm2 restart wakeup
+    pm2 restart keepalive
   else
     echo "Starting new app with PM2"
-    pm2 start "~/.bun/bin/bun run index.ts" --name wakeup
+    pm2 start "~/.bun/bin/bun run index.ts" --name keepalive
   fi
 fi
 

@@ -23,21 +23,21 @@ function insertHeader(title, subtitle, description) {
         <p class="header-description">${description || 'Keep your services responsive and prevent cold starts.'}</p>
 
         <nav class="main-nav" x-data="header()">
-            <a href="/" :class="isActive('/') ? 'active' : ''">Home</a>
+            <a href="index.html" :class="isActive('/') ? 'active' : ''">Home</a>
             <div class="dropdown-menu">
                 <a href="#" class="dropdown-trigger">Use Cases</a>
                 <div class="dropdown-content">
-                    <a href="/aws-lambda-guide">AWS Lambda</a>
-                    <a href="/render-guide">Render</a>
-                    <a href="/amplify-guide">Amplify</a>
-                    <a href="/heroku-guide">Heroku</a>
-                    <a href="/vercel-guide">Vercel</a>
-                    <a href="/platform-comparison">Platform Comparison</a>
+                    <a href="platform/aws-lambda-guide.html">AWS Lambda</a>
+                    <a href="platform/render-guide.html">Render</a>
+                    <a href="platform/amplify-guide.html">Amplify</a>
+                    <a href="platform/heroku-guide.html">Heroku</a>
+                    <a href="platform/vercel-guide.html">Vercel</a>
+                    <a href="platform/platform-comparison.html">Platform Comparison</a>
                 </div>
             </div>
-            <a href="/cold-starts.html" :class="isActive('/cold-starts.html') ? 'active' : ''">Cold Starts</a>
-            <a href="/about.html" :class="isActive('/about.html') ? 'active' : ''">About</a>
-            <a href="/faq.html" :class="isActive('/faq.html') ? 'active' : ''">FAQ</a>
+            <a href="cold-starts.html" :class="isActive('/cold-starts.html') ? 'active' : ''">Cold Starts</a>
+            <a href="about.html" :class="isActive('/about.html') ? 'active' : ''">About</a>
+            <a href="faq.html" :class="isActive('/faq.html') ? 'active' : ''">FAQ</a>
         </nav>
     `;
 }
