@@ -22,17 +22,18 @@
                 <p class="header-description">By developers. For developers. No bullshit.</p>
             </header>
 
-            <main class="faq-content">
+            <main class="page-content">
                 <div class="faq-header">
                     <h2>Your services go to sleep. We fix that with a single click.</h2>
+                    <p>Everything you need to know about keeping your endpoints warm and your users happy.</p>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>What's the problem Keep Alive solves?</h3>
                     <p>Free and low-tier hosting puts your apps to sleep after inactivity. Your users hit your endpoint, wait 10+ seconds for a cold start, and bounce. Game over.</p>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>Why not just use existing solutions?</h3>
                     <p>Current options suck:</p>
                     <ul>
@@ -42,7 +43,7 @@
                     </ul>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>How does Keep Alive fix this?</h3>
                     <p>Single endpoint. One click. Your service stays awake. That's it.</p>
                     <ul>
@@ -53,7 +54,7 @@
                     </ul>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>Is this actually free?</h3>
                     <p>Yes. Free tier gives you:</p>
                     <ul>
@@ -64,7 +65,7 @@
                     <p>Only need more when using at scale? Subscribe.</p>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>What does the paid tier include?</h3>
                     <p>Everything in free, plus:</p>
                     <ul>
@@ -76,33 +77,36 @@
                     </ul>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>Real-world scenario: Free Render Web Service</h3>
                     <p>Render's free tier puts your service to sleep after 15 minutes of inactivity. Your backend takes 30+ seconds to spin up again.</p>
                     <p><strong>User experience:</strong> Click. Wait. Wait some more. Close tab. Never return.</p>
                     <p><strong>Keep Alive solution:</strong> Add your Render URL, we ping it every 5 minutes, it stays warm. Your users never wait again.</p>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>Real-world scenario: Serverless Function Cold Starts</h3>
                     <p>Serverless functions on AWS Lambda, Vercel, or Netlify go cold after inactivity. First request triggers a cold start, slowing down critical API responses.</p>
                     <p><strong>Normal approach:</strong> Accept the performance hit or implement complex warming solutions with CloudWatch events or third-party services.</p>
                     <p><strong>Keep Alive approach:</strong> Paste your function URL, we keep it warm. One and done.</p>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>Real-world scenario: Railway Free Tier Sleeping</h3>
                     <p>Railway's free tier provides 500 hours/month but puts services to sleep to conserve your hours.</p>
                     <p><strong>Common workaround:</strong> Custom cron job on another service to ping your application (more infra to manage).</p>
                     <p><strong>Keep Alive solution:</strong> Add your Railway URL, customize the ping interval to your usage patterns, keep your app responsive while still managing your free tier hours.</p>
                 </div>
 
-                <div class="faq-item">
+                <div class="content-card">
                     <h3>Privacy & Security</h3>
                     <p>We don't store your endpoint response data. We only track URI status and response time.</p>
                     <p>All requests are made server-side to avoid CORS issues and keep your endpoints secure.</p>
                 </div>
 
+                <div class="cta-container">
+                    <a href="/" class="cta-button">Keep Your Services Awake Now</a>
+                </div>
             </main>
 
             <footer class="site-footer">

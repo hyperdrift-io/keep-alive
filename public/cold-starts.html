@@ -37,146 +37,75 @@
             <p class="header-description">Keep your services warm and responsive.</p>
         </header>
 
-        <main class="cold-starts-page">
-            <section class="hero">
-                <div class="hero-content">
-                    <h1>Your Services Are Falling Asleep. We Fix That.</h1>
-                    <p class="subtitle">Cold starts are killing your serverless performance. One click keeps everything running smoothly.</p>
-                    <a href="#" class="cta-button">Get Started Now</a>
+        <main class="page-content">
+            <div class="faq-header">
+                <h2>Why Cold Starts Matter</h2>
+                <p>Cold starts are killing your serverless performance. One click keeps everything running smoothly.</p>
+            </div>
+
+            <div class="content-card">
+                <h3>The Cold Start Problem</h3>
+                <p>Cold starts aren't just annoying—they're killing your app's performance and user experience. When your serverless functions sit idle, providers shut them down to save resources. When a request comes in, they have to spin back up, causing delays of several seconds.</p>
+                <div class="impact-highlight">
+                    <h4>The Real Impact:</h4>
+                    <ul class="impact-list">
+                        <li><strong>User Experience:</strong> Slow initial page loads and API responses</li>
+                        <li><strong>Reliability:</strong> Timeouts and failed operations during peak traffic</li>
+                        <li><strong>Development:</strong> Misleading performance metrics during testing</li>
+                    </ul>
                 </div>
-            </section>
+            </div>
 
-            <section class="problem-section">
-                <div class="section-content">
-                    <h2>The Cold Start Problem</h2>
-                    <p>Cold starts aren't just annoying—they're killing your app's performance and user experience. When your serverless functions sit idle, providers shut them down to save resources. When a request comes in, they have to spin back up, causing delays of several seconds.</p>
-                    <div class="impact-highlight">
-                        <h3>The Real Impact:</h3>
-                        <ul>
-                            <li><strong>User Experience:</strong> Slow initial page loads and API responses</li>
-                            <li><strong>Reliability:</strong> Timeouts and failed operations during peak traffic</li>
-                            <li><strong>Development:</strong> Misleading performance metrics during testing</li>
-                        </ul>
-                    </div>
+            <div class="content-card">
+                <h3>Services Suffering From Cold Starts</h3>
+                <div class="service-category">
+                    <h4>AWS Services Directly Using Lambda</h4>
+                    <ul>
+                        <li>Amazon API Gateway: Cold starts delay API response times, especially for the first request or during traffic spikes.</li>
+                        <li>AWS AppSync: Slowed GraphQL query and mutation responses.</li>
+                        <li>AWS Step Functions: Increased workflow execution time.</li>
+                    </ul>
                 </div>
-            </section>
-
-            <section class="services-affected">
-                <div class="section-content">
-                    <h2>Services Suffering From Cold Starts</h2>
-
-                    <div class="service-category">
-                        <h3>AWS Services Directly Using Lambda</h3>
-                        <div class="service-cards">
-                            <div class="service-card">
-                                <h4>Amazon API Gateway</h4>
-                                <p><strong>Impact:</strong> Cold starts delay API response times, especially for the first request or during traffic spikes.</p>
-                                <p><strong>Result:</strong> Degraded user experience for latency-sensitive applications.</p>
-                            </div>
-                            <div class="service-card">
-                                <h4>AWS AppSync</h4>
-                                <p><strong>Impact:</strong> Slowed GraphQL query and mutation responses.</p>
-                                <p><strong>Result:</strong> Poor performance in real-time applications like chat or dashboards.</p>
-                            </div>
-                            <div class="service-card">
-                                <h4>AWS Step Functions</h4>
-                                <p><strong>Impact:</strong> Increased workflow execution time.</p>
-                                <p><strong>Result:</strong> Missed SLAs for time-sensitive business processes.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="service-category">
-                        <h3>Higher-Level AWS Services Built on Lambda</h3>
-                        <div class="service-cards">
-                            <div class="service-card">
-                                <h4>AWS Amplify</h4>
-                                <p><strong>Impact:</strong> Cold starts slow down API responses in web/mobile apps.</p>
-                                <p><strong>Result:</strong> Especially problematic on free tiers with low traffic.</p>
-                            </div>
-                            <div class="service-card">
-                                <h4>AWS Chalice</h4>
-                                <p><strong>Impact:</strong> Similar to API Gateway—delayed responses.</p>
-                                <p><strong>Result:</strong> Poor performance in sporadic-use applications.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="service-category">
-                        <h3>Third-Party Platforms with Similar Behavior</h3>
-                        <div class="service-cards">
-                            <div class="service-card highlight-card">
-                                <h4>Render</h4>
-                                <p><strong>Impact:</strong> Free tier services sleep after inactivity, causing wake-up delays.</p>
-                                <p><strong>Result:</strong> First visitors experience slow page loads and API responses.</p>
-                            </div>
-                            <div class="service-card">
-                                <h4>Vercel</h4>
-                                <p><strong>Impact:</strong> Serverless functions face cold starts with infrequent use.</p>
-                                <p><strong>Result:</strong> Delayed function execution in Next.js apps.</p>
-                            </div>
-                            <div class="service-card">
-                                <h4>Netlify Functions</h4>
-                                <p><strong>Impact:</strong> Built on AWS Lambda, so same cold start issues apply.</p>
-                                <p><strong>Result:</strong> Slow responses for JAMstack applications.</p>
-                            </div>
-                            <div class="service-card">
-                                <h4>Heroku (Free Tier)</h4>
-                                <p><strong>Impact:</strong> Dynos sleep after inactivity, similar to cold starts.</p>
-                                <p><strong>Result:</strong> Significant wake-up delays for hobby projects.</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="service-category">
+                    <h4>Higher-Level AWS Services Built on Lambda</h4>
+                    <ul>
+                        <li>AWS Amplify: Cold starts slow down API responses in web/mobile apps.</li>
+                        <li>AWS Chalice: Similar to API Gateway—delayed responses.</li>
+                    </ul>
                 </div>
-            </section>
-
-            <section class="solution-section">
-                <div class="section-content">
-                    <h2>How WakeUp Solves Your Cold Start Problems</h2>
-                    <div class="solution-details">
-                        <div class="solution-feature">
-                            <h3>Simple Setup, Instant Results</h3>
-                            <p>Configure your endpoints in seconds. WakeUp automatically pings your services at optimal intervals to keep them warm and responsive.</p>
-                        </div>
-                        <div class="solution-feature">
-                            <h3>Performance Dashboard</h3>
-                            <p>Monitor response times and availability across all your endpoints. Identify issues before they impact users.</p>
-                        </div>
-                        <div class="solution-feature">
-                            <h3>Smart Scheduling</h3>
-                            <p>Automatically adjusts ping frequency based on your service behavior and traffic patterns.</p>
-                        </div>
-                        <div class="solution-feature">
-                            <h3>Multi-Platform Support</h3>
-                            <p>Works with AWS Lambda, Render, Vercel, Netlify, Heroku, and more—anywhere cold starts are a problem.</p>
-                        </div>
-                    </div>
-                    <div class="call-to-action">
-                        <p>Stop letting cold starts ruin your app's performance. Your users deserve better.</p>
-                        <a href="#" class="cta-button">Start Keeping Services Warm</a>
-                    </div>
+                <div class="service-category">
+                    <h4>Third-Party Platforms with Similar Behavior</h4>
+                    <ul>
+                        <li>Render: Free tier services sleep after inactivity, causing wake-up delays.</li>
+                        <li>Vercel: Serverless functions face cold starts with infrequent use.</li>
+                        <li>Netlify Functions: Built on AWS Lambda, so same cold start issues apply.</li>
+                        <li>Heroku (Free Tier): Dynos sleep after inactivity, similar to cold starts.</li>
+                    </ul>
                 </div>
-            </section>
+            </div>
 
-            <section class="use-cases">
-                <div class="section-content">
-                    <h2>Real-World Impact</h2>
-                    <div class="use-case-cards">
-                        <div class="use-case-card">
-                            <h3>E-Commerce API</h3>
-                            <p>An e-commerce site using AWS API Gateway + Lambda saw first-request latency drop from 3.2s to 240ms after implementing WakeUp.</p>
-                        </div>
-                        <div class="use-case-card">
-                            <h3>Render Web Service</h3>
-                            <p>A developer blog on Render's free tier eliminated the 30-second wake-up delay for first-time visitors.</p>
-                        </div>
-                        <div class="use-case-card">
-                            <h3>Microservices Architecture</h3>
-                            <p>A fintech application with 12 Lambda-based microservices reduced overall latency by 78% during low-traffic periods.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <div class="content-card">
+                <h3>How WakeUp Solves Your Cold Start Problems</h3>
+                <ul>
+                    <li>Simple Setup, Instant Results: Configure your endpoints in seconds. WakeUp automatically pings your services at optimal intervals to keep them warm and responsive.</li>
+                    <li>Performance Dashboard: Monitor response times and availability across all your endpoints. Identify issues before they impact users.</li>
+                    <li>Smart Scheduling: Automatically adjusts ping frequency based on your service behavior and traffic patterns.</li>
+                    <li>Multi-Platform Support: Works with AWS Lambda, Render, Vercel, Netlify, Heroku, and more—anywhere cold starts are a problem.</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>Real-World Impact</h3>
+                <ul>
+                    <li><strong>E-Commerce API:</strong> An e-commerce site using AWS API Gateway + Lambda saw first-request latency drop from 3.2s to 240ms after implementing WakeUp.</li>
+                    <li><strong>Render Web Service:</strong> A developer blog on Render's free tier eliminated the 30-second wake-up delay for first-time visitors.</li>
+                    <li><strong>Microservices Architecture:</strong> A fintech application with 12 Lambda-based microservices reduced overall latency by 78% during low-traffic periods.</li>
+                </ul>
+            </div>
+
+            <div class="cta-container">
+                <a href="#" class="cta-button">Start Keeping Services Warm</a>
+            </div>
         </main>
 
         <footer class="site-footer">
