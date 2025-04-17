@@ -1,21 +1,8 @@
 #!/bin/bash
 set -e
 
-# Navigate to app directory, creating it if needed
-mkdir -p ~/hyperdrift/keepalive
-cd ~/hyperdrift/keepalive
-
-# The git pull is no longer needed since we're copying files directly in the GitHub action
-# but keeping it as a fallback
-if [ ! -f package.json ]; then
-  echo "package.json not found, falling back to git clone"
-  # Pull latest changes or clone repo if not exists
-  if [ -d .git ]; then
-    git pull
-  else
-    git clone https://github.com/yannvr/keep-alive.git .
-  fi
-fi
+# Navigate to app directory
+cd ~/hyperdrift/keep-alive
 
 # Install Bun if not already installed
 if ! command -v bun &> /dev/null; then
@@ -30,19 +17,14 @@ fi
 
 # Verify Bun is installed
 echo "Bun version:"
-command -v bun || echo "Bun not found in PATH"
-~/.bun/bin/bun --version || echo "Bun executable not found"
+bun --version || echo "Bun not found"
 
 # Create logs directory if it doesn't exist
 mkdir -p logs
 
-# Install dependencies using absolute path to bun
+# Install dependencies
 echo "Installing dependencies..."
-~/.bun/bin/bun install
-
-# Print installed packages for debugging
-echo "Installed packages:"
-~/.bun/bin/bun pm ls
+bun install
 
 # Install Node.js if needed
 if ! command -v node &> /dev/null; then
@@ -61,13 +43,9 @@ fi
 echo "Building frontend with Vite..."
 bun run build
 
-echo "Deploying files..."
-# (Add your deployment logic here, e.g., rsync, scp, etc.)
-
 # Start/Restart the app with PM2
 if [ -f ecosystem.config.cjs ]; then
   echo "Using ecosystem.config.cjs with PM2"
-  # Check if the app is already running
   if pm2 list | grep -q "keepalive"; then
     echo "Restarting existing app with PM2"
     pm2 restart keepalive
@@ -77,13 +55,12 @@ if [ -f ecosystem.config.cjs ]; then
   fi
 else
   echo "ecosystem.config.cjs not found, starting app with PM2 directly"
-  # Check if the app is already running
   if pm2 list | grep -q "keep-alive"; then
     echo "Restarting existing app with PM2"
     pm2 restart keep-alive
   else
     echo "Starting new app with PM2"
-    pm2 start "~/.bun/bin/bun run index.ts" --name keep-alive
+    pm2 start "bun run index.ts" --name keep-alive
   fi
 fi
 

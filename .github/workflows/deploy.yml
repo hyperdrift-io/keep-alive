@@ -9,27 +9,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Copy project files to server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: 69.62.124.138
-          username: yannvr
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          strip_components: 0
-          overwrite: true
-          source: "package.json,ecosystem.config.cjs,index.ts,*.ts,scripts/deploy.sh,scripts/build.js,scripts/**,public/**,db.json,README.md,.gitignore"
-          target: "~/hyperdrift/keepalive"
-
-      - name: Execute deploy script
+      - name: Execute deploy script on server
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: 69.62.124.138
           username: yannvr
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/hyperdrift/keepalive/logs
-            cd ~/hyperdrift/keepalive
-            chmod +x ~/hyperdrift/keepalive/scripts/deploy.sh
+            mkdir -p ~/hyperdrift/keep-alive/logs
+            cd ~/hyperdrift/keep-alive
+            if [ ! -d ".git" ]; then
+              git clone git@github.com:yannvr/hyper.git .
+            fi
+            git checkout main
+            git pull origin main
+            chmod +x ./scripts/deploy.sh
             ./scripts/deploy.sh
