@@ -13,7 +13,7 @@ if [ ! -f package.json ]; then
   if [ -d .git ]; then
     git pull
   else
-    git clone https://github.com/yannvr/keepalive.git .
+    git clone https://github.com/yannvr/keep-alive.git .
   fi
 fi
 
@@ -78,12 +78,12 @@ if [ -f ecosystem.config.cjs ]; then
 else
   echo "ecosystem.config.cjs not found, starting app with PM2 directly"
   # Check if the app is already running
-  if pm2 list | grep -q "keepalive"; then
+  if pm2 list | grep -q "keep-alive"; then
     echo "Restarting existing app with PM2"
-    pm2 restart keepalive
+    pm2 restart keep-alive
   else
     echo "Starting new app with PM2"
-    pm2 start "~/.bun/bin/bun run index.ts" --name keepalive
+    pm2 start "~/.bun/bin/bun run index.ts" --name keep-alive
   fi
 fi
 
