@@ -15,7 +15,6 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "vite",
     "start": "bun index.ts",
     "test": "TESTING=true bun test",
     "build": "vite build",
