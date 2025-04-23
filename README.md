@@ -65,14 +65,6 @@ npm start
 
 ---
 
-## ✦ Topics
-
-```
-keepalive • uptime-monitor • heartbeat • anti-idle • automation • cli-tool • hyperdrift
-```
-
----
-
 ## ✦ License
 
 MIT — built to be remixed, reused, and kept alive across the edge.
