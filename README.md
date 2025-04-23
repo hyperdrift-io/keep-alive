@@ -1,4 +1,4 @@
-# keep-alive
+# [keep-alive](https://keepalive.tech)
 
 > ✦ _“Because downtime is for humans, not apps.”_
 
@@ -45,7 +45,7 @@ This app was designed with security in mind:
 ---
 
 <details>
-<summary>✦ Getting Started</summary>
+<summary>✦ Hack your own</summary>
 
 ```bash
 # Clone the repo
@@ -63,13 +63,4 @@ npm start
 
 </details>
 
----
-
-## ✦ License
-
-MIT — built to be remixed, reused, and kept alive across the edge.
-
----
-
-**[hyperdrift-io/keep-alive](https://github.com/hyperdrift-io/keep-alive)**  
 ✦ _Open-source tools for the forgotten edge._
