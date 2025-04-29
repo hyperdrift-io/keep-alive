@@ -1,89 +1,66 @@
-# Keep Alive Protocol
+# [keep-alive](https://keepalive.tech)
 
-A sleek URI health monitoring tool that keeps servers awake by periodically pinging endpoints.
+> ✦ _“Because downtime is for humans, not apps.”_
 
-## Features
+---
 
-- Monitor health status of multiple URLs to prevent cold starts
-- Configurable ping intervals (1, 5, or 10 minutes)
-- Per-endpoint customizable ping intervals
-- Easy-to-use interface for managing endpoints
-- Real-time status updates with visual indicators
-- Background PM2 logs display
-- Modern, responsive design with Keep Alive protocol theme
-- Live reload during development for easy interface testing
+## ✦ What It Does
 
-## Security Considerations
+**keep-alive** is a lightweight, self-hosted uptime pinger with a clean UI and zero distractions. It continuously monitors the health of multiple endpoints to prevent cold starts and unintentional sleep — especially on free-tier services or serverless APIs.
 
-This application has been designed with the following security considerations:
+Ideal for solo devs, cron wizards, indie hackers, and side project hoarders.
 
-- Input validation for all URLs
-- Rate limiting and timeouts for URI health checks
-- Error handling to prevent information leakage
+---
 
-## Installation
+## ✦ Features
 
-1. Ensure you have [Bun](https://bun.sh/) installed
-2. Clone this repository
-3. Run the following commands:
+- 🔗 Monitor health status of multiple URLs to prevent cold starts
+- ⚙️ Configurable ping intervals (1, 5, or 10 minutes)
+- 🧠 Per-endpoint customizable ping intervals
+- 🧭 Easy-to-use interface for managing endpoints
+- 📊 Real-time status updates with visual indicators
+- 🖥️ Background PM2 logs display
+- 🎨 Modern, responsive design with **Keep Alive Protocol** theme
+- 🔁 Live reload during development for easy UI testing
+
+---
+
+## ✦ Real Use Cases
+
+☍ “I need my cronjob to stay warm while I sleep.”  
+☍ “This keeps my Vercel + Notion API from freezing up.”  
+☍ “I run side projects on free tiers and don’t want to pay for uptime monitoring.”  
+☍ “I needed something simple and visual — not another YAML horror.”
+
+---
+
+## ✦ Security Considerations
+
+This app was designed with security in mind:
+
+- ✅ Input validation for all URLs
+- ✅ Rate limiting and timeouts for URI health checks
+- ✅ Graceful error handling to prevent information leakage
+
+---
+
+<details>
+<summary>✦ Hack your own</summary>
 
 ```bash
+# Clone the repo
+git clone https://github.com/hyperdrift-io/keep-alive.git
+cd keep-alive
+
 # Install dependencies
-bun install
+npm install
 
-# Start the application in development mode with auto-reload
-bun run dev
-
-# Start the application in production mode
-bun run start
+# Start the app
+npm start
 ```
 
-## Usage
+🛠 Modify your monitored URLs and intervals in [`config.json`](./config.json)
 
-1. Access the web interface at http://localhost:3001
-2. Add URLs you want to monitor
-3. The application will ping each URL at the selected interval to keep them awake
-4. Configure the ping interval for each endpoint using its settings button
+</details>
 
-## Development
-
-```bash
-# Run in development mode (with auto-reload)
-bun dev
-
-# Run tests
-bun test
-
-# Run specific test file
-bun test test.ts
-```
-
-The development mode includes live reload functionality that automatically refreshes the browser when you make changes to the source files.
-
-## Testing
-
-The application includes two types of tests:
-
-1. **Unit Tests**: Test individual components and functions
-2. **End-to-End Tests**: Test the complete application by starting the server and making real HTTP requests
-
-To run the tests:
-
-```bash
-# Run all tests
-bun test
-
-# Run specific test file
-bun test test.ts
-```
-
-## Future Enhancements
-
-- User authentication for premium features
-- Advanced reporting and analytics
-- Multiple URIs for registered users
-- Notification system for status changes
-
-## License
-
-MIT
+✦ _Open-source tools for the forgotten edge._
