@@ -344,8 +344,9 @@ const app = new Elysia()
 
 // Start the server when this file is the main module (not imported by tests)
 if (!process.env.TESTING) {
-  app.listen(3001);
-  console.log(`WakeUp app is running at http://${app.server?.hostname}:${app.server?.port}`);
+  const port = process.env.ELYZIA_PORT ? Number(process.env.ELYZIA_PORT) : 3001;
+  app.listen(port);
+  console.log(`Elysis scheduler app is running at http://${app.server?.hostname}:${app.server?.port}`);
 
   // Run initial check
   checkAllURIs();
