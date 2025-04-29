@@ -3,6 +3,7 @@ module.exports = {
     name: "keepalive",
     script: "bun run index.ts",
     env: {
+      KEEPALIVE_PORT: 3001,
       NODE_ENV: "production",
     },
     log_date_format: "YYYY-MM-DD HH:mm:ss",

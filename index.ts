@@ -344,12 +344,16 @@ const app = new Elysia()
 
 // Start the server when this file is the main module (not imported by tests)
 if (!process.env.TESTING) {
-  const port = process.env.ELYZIA_PORT ? Number(process.env.ELYZIA_PORT) : 3001;
+  const port = process.env.KEEPALIVE_PORT ? Number(process.env.KEEPALIVE_PORT) : 3001;
   app.listen(port);
-  console.log(`Elysis scheduler app is running at http://${app.server?.hostname}:${app.server?.port}`);
+  console.log(`KeepAlive app is running at http://${app.server?.hostname}:${app.server?.port}`);
 
   // Run initial check
   checkAllURIs();
+
+  if (process.env.NODE_ENV === "production") {
+    console.log("Production mode: Make sure you are not running the Bun dev server.");
+  }
 }
 
 export default app;

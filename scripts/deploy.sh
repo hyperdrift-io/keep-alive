@@ -43,6 +43,14 @@ fi
 echo "Building frontend with Vite..."
 bun run build
 
+# In production, move the public directory so Bun does not start its dev server (nginx will serve static files)
+if [ "$NODE_ENV" = "production" ]; then
+  if [ -d public ]; then
+    echo "Moving public directory to public.bak to prevent Bun dev server in production."
+    mv public public.bak
+  fi
+fi
+
 # Start/Restart the app with PM2
 if [ -f ecosystem.config.cjs ]; then
   echo "Using ecosystem.config.cjs with PM2"
@@ -60,9 +68,11 @@ else
     pm2 restart keep-alive
   else
     echo "Starting new app with PM2"
-    pm2 start "bun run index.ts" --name keep-alive
+    pm2 start "NODE_ENV=production bun index.ts" --name keep-alive
   fi
 fi
 
 # Save PM2 configuration to start on system boot
 pm2 save
+
+# If using ecosystem.config.cjs, ensure NODE_ENV is set to 'production' in the config for production deployments.
