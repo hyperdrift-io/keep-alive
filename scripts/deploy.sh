@@ -43,13 +43,11 @@ fi
 echo "Building frontend with Vite..."
 bun run build
 
-# In production, move the public directory so Bun does not start its dev server (nginx will serve static files)
-if [ -d public ]; then
-  echo "Moving public directory to public.bak to prevent Bun dev server in production."
-  mv public public.bak
-fi
+# Build the backend (transpile index.ts to dist/index.js for Node.js)
+echo "Building backend for production..."
+bun build index.ts --outdir dist --target node
 
-# Start/Restart the app with PM2
+# Start/Restart the Elysia API app with PM2 (using Node.js, no Bun static server)
 if [ -f ecosystem.config.cjs ]; then
   echo "Using ecosystem.config.cjs with PM2"
   if pm2 list | grep -q "keepalive"; then
@@ -60,17 +58,17 @@ if [ -f ecosystem.config.cjs ]; then
     pm2 start ecosystem.config.cjs
   fi
 else
-  echo "ecosystem.config.cjs not found, starting app with PM2 directly"
+  echo "ecosystem.config.cjs not found, starting Elysia API app with PM2 directly"
   if pm2 list | grep -q "keep-alive"; then
     echo "Restarting existing app with PM2"
     pm2 restart keep-alive
   else
     echo "Starting new app with PM2"
-    pm2 start "NODE_ENV=production bun index.ts" --name keep-alive
+    pm2 start "NODE_ENV=production KEEPALIVE_PORT=3001 node dist/index.js" --name keep-alive
   fi
 fi
 
 # Save PM2 configuration to start on system boot
 pm2 save
 
-# If using ecosystem.config.cjs, ensure NODE_ENV is set to 'production' in the config for production deployments.
+# If using ecosystem.config.cjs, ensure NODE_ENV is set to 'production' and KEEPALIVE_PORT to '3001' in the config for production deployments.

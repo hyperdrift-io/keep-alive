@@ -1,7 +1,8 @@
 module.exports = {
   apps: [{
     name: "keepalive",
-    script: "bun run index.ts",
+    // Run only the Elysia API server in production using Node.js (no Bun dev/static server)
+    script: "node dist/index.js",
     env: {
       KEEPALIVE_PORT: 3001,
       NODE_ENV: "production",
