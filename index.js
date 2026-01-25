@@ -231,7 +231,7 @@ async function main() {
   app.use('/api', api);
 
   // Fallback: serve index.html for any other route (SPA support)
-  app.get('*', async (req, res) => {
+  app.get(/.*/, async (req, res) => {
     const filePath = join(process.cwd(), 'dist', 'index.html');
     try {
       await stat(filePath);
