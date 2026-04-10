@@ -4,7 +4,7 @@ module.exports = {
     // Run the Express API server in production using Node.js
     script: "node index.js",
     env: {
-      KEEPALIVE_PORT: 3001,
+      KEEPALIVE_PORT: 3002,
       NODE_ENV: "production",
     },
     log_date_format: "YYYY-MM-DD HH:mm:ss",
